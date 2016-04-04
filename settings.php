@@ -35,7 +35,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
             new admin_setting_configselect('qtype_scmc/scoringmethod',
-                    get_string('configscoringmethod', 'qtype_scmc'), 'scmc', $options));
+                    get_string('configscoringmethod', 'qtype_scmc'), get_string('shuffleoptions_help', 'qtype_scmc'), 'scmc', $options));
 
     // Shuffle options.
     $settings->add(
