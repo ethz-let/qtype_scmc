@@ -288,8 +288,10 @@ class qtype_scmc_edit_form extends question_edit_form {
         // Add the scoring method radio buttons.
         $attributes = array();
         $scoringbuttons = array();
+		/*
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
                 get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
+		*/
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
                 get_string('scoringscmconezero', 'qtype_scmc'), 'scmconezero', $attributes);
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
