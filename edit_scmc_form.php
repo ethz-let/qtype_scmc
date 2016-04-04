@@ -299,7 +299,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         $mform->addGroup($scoringbuttons, 'radiogroupscoring',
         get_string('scoringmethod', 'qtype_scmc'), array(' <br/> '), false);
         $mform->addHelpButton('radiogroupscoring', 'scoringmethod', 'qtype_scmc');
-        $mform->setDefault('scoringmethod', 'scmc');
+        $mform->setDefault('scoringmethod', 'subpoints');
 
         // Add the shuffleoptions checkbox.
         $mform->addElement('advcheckbox', 'shuffleoptions',
