@@ -103,17 +103,19 @@ class qtype_scmc_renderer extends qtype_renderer {
 
         $table->head = array();
         // Add empty header for option texts.
-        $table->head[] = '';
-
-        // Add the response texts as table headers.
-        foreach ($question->columns as $column) {
-            $cell = new html_table_cell(
-                    $question->make_html_inline(
-                            $question->format_text($column->responsetext,
-                                    $column->responsetextformat, $qa, 'question', 'response',
-                                    $column->id)));
-            $table->head[] = $cell;
-        }
+        // $table->head[] = '';
+		
+		// Add the response texts as table headers if question is not single choice.
+		if(count($question->columns) > 1) {	
+			foreach ($question->columns as $column) {
+				$cell = new html_table_cell(
+						$question->make_html_inline(
+								$question->format_text($column->responsetext,
+										$column->responsetextformat, $qa, 'question', 'response',
+										$column->id)));
+				$table->head[] = $cell;
+			}
+		}
 
         // Add empty header for correctness if needed.
         if ($displayoptions->correctness) {
@@ -133,15 +135,6 @@ class qtype_scmc_renderer extends qtype_renderer {
 
             // Holds the data for one table row.
             $rowdata = array();
-
-            // Add the formated option text to the table.
-            $rowtext = $question->make_html_inline(
-                    $question->format_text($row->optiontext, $row->optiontextformat, $qa,
-                            'qtype_scmc', 'optiontext', $row->id));
-
-            $cell = new html_table_cell('<span class="optiontext">' . $rowtext . '</span>');
-            $cell->attributes['class'] = 'optiontext';
-            $rowdata[] = $cell;
 
             // Add the response radio buttons to the table.
             foreach ($question->columns as $column) {
@@ -163,6 +156,15 @@ class qtype_scmc_renderer extends qtype_renderer {
                 $rowdata[] = $cell;
             }
 
+
+            // Add the formated option text to the table.
+            $rowtext = $question->make_html_inline(
+                    $question->format_text($row->optiontext, $row->optiontextformat, $qa,
+                            'qtype_scmc', 'optiontext', $row->id));
+
+            $cell = new html_table_cell('<span class="optiontext">' . $rowtext . '</span>');
+            $cell->attributes['class'] = 'optiontext';
+            $rowdata[] = $cell;
             // Has a selection been made for this option?
             $isselected = $question->is_answered($response, $key);
             // For correctness we have to grade the option...

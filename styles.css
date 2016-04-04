@@ -59,18 +59,14 @@
 
 .que.scmc table.scmc tbody td.scmcresponsebutton {
 	background: #EEE;
+	max-width: 64px;
 	opacity: 0.1;
 	filter: alpha(opacity = 10); /* msie */
 	background-color: #000;
 }
-
 .scmcresponsebutton {
-	/*
-    opacity: 0.4;
-    filter: alpha(opacity=40);
-    */
+	width: 64px;
 }
-
 .scmcgreyingout {
 	opacity: 0.3;
 	filter: alpha(opacity = 30);
