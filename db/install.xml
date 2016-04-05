@@ -19,6 +19,7 @@
 					DEFAULT="4" SEQUENCE="false" COMMENT="The number options used by Single Choice Multi Choice questions." />
 				<FIELD NAME="numberofcolumns" TYPE="int" LENGTH="4" NOTNULL="true"
 					DEFAULT="2" SEQUENCE="false" COMMENT="The number of responses of Single Choice Multi Choice questions." />
+				<FIELD NAME="answernumbering" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="none" SEQUENCE="false" COMMENT="Indicates how and whether the choices should be numbered." />
 			</FIELDS>
 			<KEYS>
 				<KEY NAME="primary" TYPE="primary" FIELDS="id" />

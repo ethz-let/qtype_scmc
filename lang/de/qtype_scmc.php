@@ -19,6 +19,16 @@
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
+$string['answerhowmany'] = 'Eine oder mehrere Antworten?';
+$string['answernumbering'] = 'Antworten nummerieren?';
+$string['answernumbering123'] = '1., 2., 3., ...';
+$string['answernumberingabc'] = 'a., b., c., ...';
+$string['answernumberingABCD'] = 'A., B., C., ...';
+$string['answernumberingiii'] = 'i., ii., iii., ...';
+$string['answernumberingIIII'] = 'I., II., III., ...';
+$string['answernumberingnone'] = 'Keine Nummerierung';
+$string['answersingleno'] = 'Mehrere Antworten erlauben';
+$string['answersingleyes'] = 'Nur eine Antwort erlauben'; 
 $string['configintro'] = 'Standardeinstellungen für SC/MC-Fragen.';
 $string['configscoringmethod'] = 'Standard Bewertung für SC/MC-Fragen.';
 $string['configshuffleoptions'] = 'Standardeinstellung für das Mischen der Wahlantworten.';

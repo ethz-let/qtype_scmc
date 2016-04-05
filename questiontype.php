@@ -163,6 +163,7 @@ class qtype_scmc extends question_type {
             $options->shuffleoptions = '';
             $options->numberofcolumns = '';
             $options->numberofrows = '';
+			$options->answernumbering = '';
             $options->id = $DB->insert_record('qtype_scmc_options', $options);
         }
 
@@ -170,6 +171,7 @@ class qtype_scmc extends question_type {
         $options->shuffleoptions = $question->shuffleoptions;
         $options->numberofrows = $question->numberofrows;
         $options->numberofcolumns = $question->numberofcolumns;
+		$options->answernumbering = $question->answernumbering;
         $DB->update_record('qtype_scmc_options', $options);
 
         $this->save_hints($question, true);
@@ -281,6 +283,7 @@ class qtype_scmc extends question_type {
         $question->rows = $questiondata->options->rows;
         $question->columns = $questiondata->options->columns;
         $question->weights = $questiondata->options->weights;
+		$question->answernumbering = $questiondata->options->answernumbering;
     }
 
     /**
@@ -330,9 +333,7 @@ class qtype_scmc extends question_type {
      */
     public function get_random_guess_score($questiondata) {
         $scoring = $questiondata->options->scoringmethod;
-        if ($scoring == 'scmc') {
-            return 0.1875;
-        } else if ($scoring == 'scmconezero') {
+        if ($scoring == 'scmconezero') {
             return 0.0625;
         } else if ($scoring == 'subpoints') {
             return 0.5;
@@ -381,7 +382,22 @@ class qtype_scmc extends question_type {
 
         return $parts;
     }
-
+	
+    /**
+     * @return array of the numbering styles supported. For each one, there
+     *      should be a lang string answernumberingxxx in teh qtype_scmc
+     *      language file, and a case in the switch statement in number_in_style,
+     *      and it should be listed in the definition of this column in install.xml.
+     */
+    public static function get_numbering_styles() {
+        $styles = array();
+        foreach (array('none', 'abc', 'ABCD', '123', 'iii', 'IIII') as $numberingoption) {
+            $styles[$numberingoption] =
+                    get_string('answernumbering' . $numberingoption, 'qtype_scmc');
+        }
+        return $styles;
+    }
+	
     /**
      * (non-PHPdoc).
      *
@@ -473,6 +489,7 @@ class qtype_scmc extends question_type {
         $expout .= '    <numberofrows>' . $question->options->numberofrows . "</numberofrows>\n";
         $expout .= '    <numberofcolumns>' . $question->options->numberofcolumns .
                  "</numberofcolumns>\n";
+		$expout .= '    <answernumbering>' . $question->options->answernumbering . "</answernumbering>\n";
 
         // Now we export the question rows (options).
         foreach ($question->options->rows as $row) {
@@ -555,7 +572,10 @@ class qtype_scmc extends question_type {
         $question->numberofcolumns = $format->getpath($data,
         array('#', 'numberofcolumns', 0, '#'
         ), QTYPE_SCMC_NUMBER_OF_RESPONSES);
-
+        $question->answernumbering = $format->getpath($data,
+        array('#', 'answernumbering', 0, '#'
+        ), 'none');
+		
         $rows = $data['#']['row'];
         $i = 1;
         foreach ($rows as $row) {

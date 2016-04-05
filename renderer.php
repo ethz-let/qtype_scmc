@@ -106,7 +106,7 @@ class qtype_scmc_renderer extends qtype_renderer {
         // $table->head[] = '';
 		
 		// Add the response texts as table headers if question is not single choice.
-		if(count($question->columns) > 1) {	
+		if (count($question->columns) > 1) {	
 			foreach ($question->columns as $column) {
 				$cell = new html_table_cell(
 						$question->make_html_inline(
@@ -126,7 +126,7 @@ class qtype_scmc_renderer extends qtype_renderer {
             $table->head[] = '';
         }
 
-        $rowcount = 1;
+        $rowcount = 0;
         $isreadonly = $displayoptions->readonly;
 
         foreach ($question->get_order($qa) as $key => $rowid) {
@@ -138,13 +138,19 @@ class qtype_scmc_renderer extends qtype_renderer {
 
             // Add the response radio buttons to the table.
             foreach ($question->columns as $column) {
+				/*if (!$buttonname){
+					$buttonname = $qa->get_field_prefix(). $field;
+					$buttonid = $buttonname;
+				}else{
+					$buttonid = $qa->get_field_prefix() . $field;
+				}*/
                 $buttonname = $qa->get_field_prefix() . $field;
+				$buttonid = $buttonname;
                 $ischecked = false;
                 if (array_key_exists($field, $response) && ($response[$field] == $column->number)) {
                     $ischecked = true;
                 }
-                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly);
-
+                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid);
                 // Show correctness icon with radio button if needed.
                 if ($displayoptions->correctness) {
                     $weight = $question->weight($row->number, $column->number);
@@ -156,13 +162,13 @@ class qtype_scmc_renderer extends qtype_renderer {
                 $rowdata[] = $cell;
             }
 
-
             // Add the formated option text to the table.
-            $rowtext = $question->make_html_inline(
-                    $question->format_text($row->optiontext, $row->optiontextformat, $qa,
+            $rowtext = $this->number_in_style($rowcount, $question->answernumbering) .
+					   $question->make_html_inline($question->format_text( $row->optiontext, $row->optiontextformat, $qa,
                             'qtype_scmc', 'optiontext', $row->id));
+			$rowcount++;
 
-            $cell = new html_table_cell('<span class="optiontext">' . $rowtext . '</span>');
+            $cell = new html_table_cell('<span class="optiontext"><label for="' . $buttonid . '">' . $rowtext . '</label></span>');
             $cell->attributes['class'] = 'optiontext';
             $rowdata[] = $cell;
             // Has a selection been made for this option?
@@ -205,11 +211,13 @@ class qtype_scmc_renderer extends qtype_renderer {
      *
      * @return string
      */
-    protected static function radiobutton($name, $value, $checked, $readonly) {
+    protected static function radiobutton($name, $value, $checked, $readonly, $id = '') {
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
-
-        return '<input type="radio" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
+		if ($id == '') {
+			$id = $name;
+		}
+        return '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
                  $readonly . '/>';
     }
 
@@ -254,4 +262,39 @@ class qtype_scmc_renderer extends qtype_renderer {
 
         return $response;
     }
+	
+    protected function number_html($qnum) {
+        return $qnum . '. ';
+    }
+
+    /**
+     * @param int $num The number, starting at 0.
+     * @param string $style The style to render the number in. One of the
+     * options returned by {@link qtype_scmc:;get_numbering_styles()}.
+     * @return string the number $num in the requested style.
+     */
+    protected function number_in_style($num, $style) {
+        switch($style) {
+            case 'abc':
+                $number = chr(ord('a') + $num);
+                break;
+            case 'ABCD':
+                $number = chr(ord('A') + $num);
+                break;
+            case '123':
+                $number = $num + 1;
+                break;
+            case 'iii':
+                $number = question_utils::int_to_roman($num + 1);
+                break;
+            case 'IIII':
+                $number = strtoupper(question_utils::int_to_roman($num + 1));
+                break;
+            case 'none':
+                return '';
+            default:
+                return 'ERR';
+        }
+        return $this->number_html($number);
+    }	
 }

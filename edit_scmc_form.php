@@ -138,7 +138,12 @@ class qtype_scmc_edit_form extends question_edit_form {
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question'),
         array('rows' => 10), $this->editoroptions);
         $mform->setType('generalfeedback', PARAM_RAW);
-        $mform->addHelpButton('generalfeedback', 'generalfeedback', 'qtype_scmc');
+        $mform->addHelpButton('generalfeedback', 'generalfeedback', 'qtype_scmc');print_r($this->question);
+		echo "XXXXXXXXX".$this->question->answernumbering;exit;
+		$mform->addElement('select', 'answernumbering',
+                get_string('answernumbering', 'qtype_scmc'),
+                qtype_scmc::get_numbering_styles());
+        $mform->setDefault('answernumbering', array('none'));
 
         // Any questiontype specific fields.
         $this->definition_inner($mform);
@@ -293,9 +298,9 @@ class qtype_scmc_edit_form extends question_edit_form {
                 get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
 		*/
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
-                get_string('scoringscmconezero', 'qtype_scmc'), 'scmconezero', $attributes);
-        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
                 get_string('scoringsubpoints', 'qtype_scmc'), 'subpoints', $attributes);
+		$scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
+                get_string('scoringscmconezero', 'qtype_scmc'), 'scmconezero', $attributes);
         $mform->addGroup($scoringbuttons, 'radiogroupscoring',
         get_string('scoringmethod', 'qtype_scmc'), array(' <br/> '), false);
         $mform->addHelpButton('radiogroupscoring', 'scoringmethod', 'qtype_scmc');
