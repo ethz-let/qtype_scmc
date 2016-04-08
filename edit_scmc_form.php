@@ -189,31 +189,32 @@ class qtype_scmc_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
         $scmcconfig = get_config('qtype_scmc');
+		
         if (isset($this->question->options->rows) && count($this->question->options->rows) > 0) {
             $this->numberofrows = count($this->question->options->rows);
         } else {
-            $this->numberofrows = QTYPE_SCMC_NUMBER_OF_OPTIONS;
+            $this->numberofrows = 3;
         }
         if (isset($this->question->options->columns) && count($this->question->options->columns) > 0) {
             $this->numberofcolumns = count($this->question->options->columns);
         } else {
-            $this->numberofcolumns = QTYPE_SCMC_NUMBER_OF_RESPONSES;
+            $this->numberofcolumns = 2;
         }
-        $this->editoroptions['changeformat'] = 1;
+		/*
         $mform->addElement('hidden', 'numberofrows', $this->numberofrows);
-        $mform->setType('numberofrows', PARAM_INT);
-        $mform->addElement('hidden', 'choosennoofoptions', 3);
-        $mform->setType('choosennoofoptions', PARAM_INT);		
+        $mform->setType('numberofrows', PARAM_INT);			
         $mform->addElement('hidden', 'numberofcolumns', $this->numberofcolumns);
         $mform->setType('numberofcolumns', PARAM_INT);
+		*/
 		
+		$this->editoroptions['changeformat'] = 1;
 		$menu = array(
-            get_string('answersingleno', 'qtype_scmc'),
-            get_string('answersingleyes', 'qtype_scmc'),
+			1 => get_string('answersingleyes', 'qtype_scmc'),
+            2 => get_string('answersingleno', 'qtype_scmc')
         );
-		$mform->addElement('select', 'scmchowmanyanswers',
-        get_string('answerhowmany', 'qtype_scmc'), $menu);
-        $mform->setDefault('scmchowmanyanswers', 2);
+		$mform->addElement('select', 'numberofcolumns',
+        get_string('numberofcolumns', 'qtype_scmc'), $menu);
+        $mform->setDefault('numberofcolumns', 2);
 		
 		$numberoptionsmenu = array(
             2 => 2,
@@ -221,22 +222,24 @@ class qtype_scmc_edit_form extends question_edit_form {
 			4 => 4,
 			5 => 5,
         );
-		//if(isset($this->question->id)) {
-		//	$numoptionsdisabled = array('disabled'=>'disabled');
-		//} else {
+		/*
+		if(isset($this->question->id)) {
+			$numoptionsdisabled = array('disabled'=>'disabled');
+		} else {
 			$numoptionsdisabled = array();
-		//}
-		$mform->addElement('select', 'numberofoptions',
-        get_string('numberofoptions', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
-        $mform->setDefault('numberofoptions', 3);		
-
+		}
+		*/
+		$numoptionsdisabled = array();
+		$mform->addElement('select', 'numberofrows',
+        get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
+        $mform->setDefault('numberofrows', 3);
         $mform->addElement('header', 'optionsandfeedbackheader',
                 get_string('optionsandfeedback', 'qtype_scmc'));
 
         // Add the response text fields.
 		$mform->addElement('html', '<span id="judgmentoptionsspan">');
         $responses = array();
-        for ($i = 1; $i <= $this->numberofcolumns; ++$i) {
+        for ($i = 1; $i <= 2; ++$i) {
             $label = '';
             if ($i == 1) {
                 $label = get_string('responsetexts', 'qtype_scmc');
@@ -246,7 +249,7 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->setType('responsetext_' . $i, PARAM_TEXT);
             $mform->addRule('responsetext_' . $i, null, 'required', null, 'client');
 
-            if ($this->numberofcolumns == 2) {
+            if (2 == 2) {
                 $mform->setDefault('responsetext_' . $i,
                 get_string('responsetext' . $i, 'qtype_scmc'));
             }
@@ -263,7 +266,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         }
 
         // Add an option text editor, response radio buttons and a feedback editor for each option.
-        for ($i = 1; $i <= $this->numberofrows; ++$i) {
+        for ($i = 1; $i <= 5 /*$this->numberofrows*/; ++$i) {
             // Add the option editor.
             $mform->addElement('html', '<div class="optionbox" id="optionbox_response_'.$i.'">'); // Open div.optionbox.
             $mform->addElement('html', '<div class="optionandresponses">'); // Open div.optionbox.
@@ -286,7 +289,7 @@ class qtype_scmc_edit_form extends question_edit_form {
             $radiobuttons = array();
 			$radiobuttonname = 'weightbutton_' . $i;
 			
-            for ($j = 1; $j <= $this->numberofcolumns; ++$j) {
+            for ($j = 1; $j <= 2; ++$j) {
 				if ($j == 1){
 					$negativeorpositive = 'positive'; // Usually TRUE
 				}else{
@@ -294,7 +297,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 				}
 				$attributes = array('data-colscmc'=>$negativeorpositive);
 				/*
-				if ($this->numberofcolumns >= 2) { //disable all other exclusive radios
+				if (2 >= 2) { //disable all other exclusive radios
 					$radiobuttonname = 'weightbutton_' . $i;	
 				} else {
 					$radiobuttonname = 'weightbutton[]';						
@@ -382,8 +385,8 @@ class qtype_scmc_edit_form extends question_edit_form {
             $question->scoringmethod = $question->options->scoringmethod;
             $question->rows = $question->options->rows;
             $question->columns = $question->options->columns;
-            $question->numberofrows = count($question->rows);
-            $question->numberofcolumns = count($question->columns);
+            $question->numberofrows = $question->options->numberofrows; //count($question->rows);
+            $question->numberofcolumns = $question->options->numberofcolumns; //count($question->columns);
         }
 
         if (isset($this->question->id)) {
@@ -419,9 +422,9 @@ class qtype_scmc_edit_form extends question_edit_form {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
         // Check for empty option texts.
-        for ($i = 1; $i <= $this->numberofrows; ++$i) {
+		
+        for ($i = 1; $i <= $data['numberofrows']; ++$i) {
             $optiontext = $data['option_' . $i]['text'];
             // Remove HTML tags.
             $optiontext = trim(strip_tags($optiontext));
@@ -436,9 +439,8 @@ class qtype_scmc_edit_form extends question_edit_form {
                 $errors['option_' . $i] = get_string('mustsupplyvalue', 'qtype_scmc');
             }
         }
-
         // Check for empty response texts.
-        for ($j = 1; $j <= $this->numberofcolumns; ++$j) {
+        for ($j = 1; $j <= $data['numberofcolumns']; ++$j) {
             if (trim(strip_tags($data['responsetext_' . $j])) == false) {
                 $errors['responsetext_' . $j] = get_string('mustsupplyvalue', 'qtype_scmc');
             }
