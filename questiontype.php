@@ -148,7 +148,7 @@ class qtype_scmc extends question_type {
      */
     public function save_question_options($question) {
         global $DB;
-//print_r($question);exit;
+print_r($question);exit;
         $context = $question->context;
         $result = new stdClass();
 

@@ -202,17 +202,33 @@ class qtype_scmc_edit_form extends question_edit_form {
         $this->editoroptions['changeformat'] = 1;
         $mform->addElement('hidden', 'numberofrows', $this->numberofrows);
         $mform->setType('numberofrows', PARAM_INT);
+        $mform->addElement('hidden', 'choosennoofoptions', 3);
+        $mform->setType('choosennoofoptions', PARAM_INT);		
         $mform->addElement('hidden', 'numberofcolumns', $this->numberofcolumns);
         $mform->setType('numberofcolumns', PARAM_INT);
 		
 		$menu = array(
-            get_string('answersingleno', 'qtype_multichoicescmc'),
-            get_string('answersingleyes', 'qtype_multichoicescmc'),
+            get_string('answersingleno', 'qtype_scmc'),
+            get_string('answersingleyes', 'qtype_scmc'),
         );
-		$mform->addElement('select', 'howmanyanswers',
+		$mform->addElement('select', 'scmchowmanyanswers',
         get_string('answerhowmany', 'qtype_scmc'), $menu);
-        $mform->setDefault('single', 1);
+        $mform->setDefault('scmchowmanyanswers', 2);
 		
+		$numberoptionsmenu = array(
+            2 => 2,
+            3 => 3,
+			4 => 4,
+			5 => 5,
+        );
+		//if(isset($this->question->id)) {
+		//	$numoptionsdisabled = array('disabled'=>'disabled');
+		//} else {
+			$numoptionsdisabled = array();
+		//}
+		$mform->addElement('select', 'numberofoptions',
+        get_string('numberofoptions', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
+        $mform->setDefault('numberofoptions', 3);		
 
         $mform->addElement('header', 'optionsandfeedbackheader',
                 get_string('optionsandfeedback', 'qtype_scmc'));
@@ -249,7 +265,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         // Add an option text editor, response radio buttons and a feedback editor for each option.
         for ($i = 1; $i <= $this->numberofrows; ++$i) {
             // Add the option editor.
-            $mform->addElement('html', '<div class="optionbox">'); // Open div.optionbox.
+            $mform->addElement('html', '<div class="optionbox" id="optionbox_response_'.$i.'">'); // Open div.optionbox.
             $mform->addElement('html', '<div class="optionandresponses">'); // Open div.optionbox.
 
             $mform->addElement('html', '<div class="optiontext">'); // Open div.optiontext.
