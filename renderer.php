@@ -68,7 +68,7 @@ class qtype_scmc_renderer extends qtype_renderer {
     protected function get_input_id(question_attempt $qa, $value) {
         return $qa->get_qt_field_name('option' . $value);
     }
-
+	
     /**
      * Generate the display of the formulation part of the question.
      * This is the
@@ -244,7 +244,14 @@ class qtype_scmc_renderer extends qtype_renderer {
 
         foreach ($question->order as $key => $rowid) {
             $row = $question->rows[$rowid];
+			
             $correctcolumn = $question->columns[$correctresponse[$rowid]];
+			if (!$correctcolumn) {
+				$correctcolumn = new stdClass;
+				$correctcolumn->responsetextformat = 1;
+				$correctcolumn->responsetext = get_string('false','qtype_scmc');
+				$correctcolumn->id = $correctresponse[$rowid];
+			}
 
             $result[] = ' ' .
                      $question->make_html_inline(

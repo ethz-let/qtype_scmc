@@ -22,7 +22,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 define('QTYPE_SCMC_NUMBER_OF_OPTIONS', 5);
-define('QTYPE_SCMC_NUMBER_OF_RESPONSES', 1);
+define('QTYPE_SCMC_NUMBER_OF_RESPONSES', 2);
 
 /**
  * Checks file/image access for scmc questions.
