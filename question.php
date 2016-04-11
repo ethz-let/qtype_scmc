@@ -144,7 +144,6 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
         $rownumber = is_object($row) ? $row->number : $row;
         $colnumber = is_object($col) ? $col->number : $col;
         $weight = (float) $this->weights[$rownumber][$colnumber]->weight;
-
         return $weight;
     }
 

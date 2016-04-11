@@ -82,6 +82,7 @@ class qtype_scmc_renderer extends qtype_renderer {
      */
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $displayoptions) {
+		global $CFG;
         $question = $qa->get_question();
         $response = $question->get_response($qa);
 
@@ -93,6 +94,8 @@ class qtype_scmc_renderer extends qtype_renderer {
             $inputattributes['disabled'] = 'disabled';
         }
 
+		$this->page->requires->js( new moodle_url($CFG->wwwroot . '/question/type/scmc/js/attempt.js') );
+		
         $result = '';
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
         array('class' => 'qtext'
@@ -132,25 +135,20 @@ class qtype_scmc_renderer extends qtype_renderer {
         foreach ($question->get_order($qa) as $key => $rowid) {
             $field = $question->field($key);
             $row = $question->rows[$rowid];
-
             // Holds the data for one table row.
             $rowdata = array();
 
             // Add the response radio buttons to the table.
             foreach ($question->columns as $column) {
-				/*if (!$buttonname){
-					$buttonname = $qa->get_field_prefix(). $field;
-					$buttonid = $buttonname;
-				}else{
-					$buttonid = $qa->get_field_prefix() . $field;
-				}*/
+
                 $buttonname = $qa->get_field_prefix() . $field;
-				$buttonid = $buttonname;
+				$buttonid = 'qtype_scmc_' . $qa->get_field_prefix() . $field;
+				$datacol = 'data-scmc="qtype_scmc_' . $question->id . '"';
                 $ischecked = false;
                 if (array_key_exists($field, $response) && ($response[$field] == $column->number)) {
                     $ischecked = true;
                 }
-                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid);
+                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol);
                 // Show correctness icon with radio button if needed.
                 if ($displayoptions->correctness && count($question->columns) > 1) {
                     $weight = $question->weight($row->number, $column->number);
@@ -229,14 +227,14 @@ class qtype_scmc_renderer extends qtype_renderer {
      *
      * @return string
      */
-    protected static function radiobutton($name, $value, $checked, $readonly, $id = '') {
+    protected static function radiobutton($name, $value, $checked, $readonly, $id = '', $datacol = '') {
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
 		if ($id == '') {
 			$id = $name;
 		}
         return '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
-                 $readonly . '/>';
+                 $readonly . ' ' . $datacol . '/>';
     }
 
     /**
@@ -260,14 +258,20 @@ class qtype_scmc_renderer extends qtype_renderer {
         $correctresponse = $question->get_correct_response(true);
         foreach ($question->order as $key => $rowid) {
             $row = $question->rows[$rowid];
-			
-            $correctcolumn = $question->columns[$correctresponse[$rowid]];
+
+			if (isset($correctresponse[$rowid])){
+				if (isset($question->columns[$correctresponse[$rowid]])){
+					$correctcolumn = $question->columns[$correctresponse[$rowid]];
+				}
+			}
+            
 			if (!$correctcolumn) {
 				$correctcolumn = new stdClass;
 				$correctcolumn->responsetextformat = 1;
 				$correctcolumn->responsetext = get_string('false','qtype_scmc');
 				$correctcolumn->id = $correctresponse[$rowid];
 			}
+
 
             $result[] = ' ' .
                      $question->make_html_inline(
