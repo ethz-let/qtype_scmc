@@ -148,7 +148,12 @@ class qtype_scmc_renderer extends qtype_renderer {
                 if (array_key_exists($field, $response) && ($response[$field] == $column->number)) {
                     $ischecked = true;
                 }
-                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol);
+				if (count($question->columns) > 1) {
+					$datamulti = 'data-multiscmc="1"';
+				} else {
+					$datamulti = 'data-multiscmc="0"';
+				}
+                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol, $datamulti);
                 // Show correctness icon with radio button if needed.
                 if ($displayoptions->correctness && count($question->columns) > 1) {
                     $weight = $question->weight($row->number, $column->number);
@@ -227,14 +232,14 @@ class qtype_scmc_renderer extends qtype_renderer {
      *
      * @return string
      */
-    protected static function radiobutton($name, $value, $checked, $readonly, $id = '', $datacol = '') {
+    protected static function radiobutton($name, $value, $checked, $readonly, $id = '', $datacol = '', $datamulti = '') {
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
 		if ($id == '') {
 			$id = $name;
 		}
         return '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
-                 $readonly . ' ' . $datacol . '/>';
+                 $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
     }
 
     /**
