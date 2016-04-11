@@ -19,7 +19,7 @@
 			// Number of Answers
 			$('#id_numberofcolumns').on('change', function() {
 				howmanyanswers = $('#id_numberofcolumns').val();
-				scmctypechanged(howmanyanswers);
+				scmctypechanged(howmanyanswers,'changed');
 			});
 			// Number of Qestions
 			$('#id_numberofrows').on('change', function() {
@@ -36,19 +36,32 @@
 					$('#'+radioscmcid).prop('checked', true); // Tick the originally clicked on radio
 				}
 			});					
-			scmctypechanged = function(howmanyanswers){
+			scmctypechanged = function(howmanyanswers, loadorchanged){
 				var scmcradionegative = 'input[data-colscmc="negative"]';
 				var scmcradiopositive = 'input[data-colscmc="positive"]';
 				if (howmanyanswers == 1) {
 					$('#judgmentoptionsspan').hide();
 					$(scmcradionegative).hide(); // Hide second radio (FALSE)
 					$(scmcradionegative).parent().hide(); // Hide the label of radios
-					$(scmcradionegative).attr('checked', true); // Tick all FALSE radios
+					if (loadorchanged == 'changed') {
+						$(scmcradionegative).attr('checked', true); // Tick all FALSE radios
+					}
+					$('#id_scoringmethod_scmconezero').attr('checked', true); // ALWAYS MC1/0
+					$('#id_scoringmethod_subpoints').hide(); // Do not allow change
+					$('#id_scoringmethod_subpoints').parent().hide(); // Do not allow change
+					
 				} else{
 					$('#judgmentoptionsspan').show();
 					$(scmcradionegative).show();
 					$(scmcradionegative).parent().show(); // Show the label of radio button
+					$('#id_scoringmethod_subpoints').show();
+					$('#id_scoringmethod_subpoints').parent().show();
 				}
+				
+				// If changed by human, then tick first TRUE
+				if (loadorchanged == 'changed') {
+					$('#id_weightbutton_1_1').prop('checked', true);
+				}				
 			};
 			scmcnumberchanged = function(numberofrows, loadorchanged){
 				numberofrows = parseInt(numberofrows);
@@ -84,10 +97,16 @@
 			$('#id_numberofrows').css("background-color", "#FFFFFF");	
 			
 			var howmanyanswers = $('#id_numberofcolumns').val();
-			scmctypechanged(howmanyanswers);
+			scmctypechanged(howmanyanswers, 'load');
 			
 			var numberofrows = $('#id_numberofrows').val();
 			scmcnumberchanged(numberofrows, 'load');
+			
+			// If firsttime loading, then tick first TRUE
+			if (!$('input[data-colscmc="positive"]:checked').val()) {
+				// Tick first TRUE
+				$('#id_weightbutton_1_1').prop('checked', true);
+			}				
 
 		
 	});	

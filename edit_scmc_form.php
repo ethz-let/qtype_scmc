@@ -249,10 +249,8 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->setType('responsetext_' . $i, PARAM_TEXT);
             $mform->addRule('responsetext_' . $i, null, 'required', null, 'client');
 
-            if (2 == 2) {
-                $mform->setDefault('responsetext_' . $i,
+            $mform->setDefault('responsetext_' . $i,
                 get_string('responsetext' . $i, 'qtype_scmc'));
-            }
         }
 		$mform->addElement('html', '</span>');
         $responsetexts = array();
@@ -260,6 +258,13 @@ class qtype_scmc_edit_form extends question_edit_form {
             foreach ($this->question->options->columns as $key => $column) {
                 $responsetexts[] = format_text($column->responsetext, FORMAT_HTML);
             }
+			// What if only one col? have the max just in case
+			if (count($responsetexts)) {
+				for ($i = count($this->question->options->columns) + 1; $i <= QTYPE_SCMC_NUMBER_OF_RESPONSES; $i++ ) {
+					// Always default it to second options values...
+					$responsetexts[] = get_string('responsetext2', 'qtype_scmc');
+				}				
+			}
         } else {
             $responsetexts[] = get_string('responsetext1', 'qtype_scmc');
             $responsetexts[] = get_string('responsetext2', 'qtype_scmc');
@@ -280,7 +285,6 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->setDefault('option_' . $i,
             array('text' => get_string('enteroptionhere', 'qtype_scmc')));
             $mform->setType('option_' . $i, PARAM_RAW);
-            $mform->addRule('option_' . $i, null, 'required', null, 'client');
 
             $mform->addElement('html', '</div>'); // Close div.optiontext.
 
@@ -423,7 +427,7 @@ class qtype_scmc_edit_form extends question_edit_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         // Check for empty option texts.
-		
+		//echo "rows: ".$data['numberofrows']." and cols: ".$data['numberofcolumns'];exit;
         for ($i = 1; $i <= $data['numberofrows']; ++$i) {
             $optiontext = $data['option_' . $i]['text'];
             // Remove HTML tags.

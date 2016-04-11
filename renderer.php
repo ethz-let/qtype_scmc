@@ -152,7 +152,7 @@ class qtype_scmc_renderer extends qtype_renderer {
                 }
                 $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid);
                 // Show correctness icon with radio button if needed.
-                if ($displayoptions->correctness) {
+                if ($displayoptions->correctness && count($question->columns) > 1) {
                     $weight = $question->weight($row->number, $column->number);
                     $radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
                              '</span>';
@@ -175,10 +175,24 @@ class qtype_scmc_renderer extends qtype_renderer {
             $isselected = $question->is_answered($response, $key);
             // For correctness we have to grade the option...
             if ($displayoptions->correctness) {
-                $rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
-                $cell = new html_table_cell($this->feedback_image($rowgrade));
-                $cell->attributes['class'] = 'scmccorrectness';
-                $rowdata[] = $cell;
+				if (count($question->columns) > 1) {
+					$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
+					$cell = new html_table_cell($this->feedback_image($rowgrade));
+					$cell->attributes['class'] = 'scmccorrectness';
+					$rowdata[] = $cell;
+				} else {
+					if ($isselected) {
+						$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
+						$cell = new html_table_cell($this->feedback_image($rowgrade));
+						$cell->attributes['class'] = 'scmccorrectness';
+						$rowdata[] = $cell;
+					} else {
+						$cell = new html_table_cell('');
+						$cell->attributes['class'] = 'scmccorrectness';
+						$rowdata[] = $cell;
+					}
+				}
+
             }
 
             // Add the feedback to the table, if it is visible.
@@ -191,8 +205,12 @@ class qtype_scmc_renderer extends qtype_renderer {
                                                 $row->optionfeedbackformat, $qa, 'qtype_scmc',
                                                 'feedbacktext', $rowid)),
                                 array('class' => 'scmcspecificfeedback')));
+								
                 $rowdata[] = $cell;
-            }
+            } else {
+				 $cell = new html_table_cell( html_writer::tag('div', ''));
+				 $rowdata[] = $cell;
+			}
             $table->data[] = $rowdata;
         }
 
@@ -237,11 +255,9 @@ class qtype_scmc_renderer extends qtype_renderer {
      */
     public function correct_response(question_attempt $qa) {
         $question = $qa->get_question();
-
         $result = array();
         $response = '';
         $correctresponse = $question->get_correct_response(true);
-
         foreach ($question->order as $key => $rowid) {
             $row = $question->rows[$rowid];
 			

@@ -148,7 +148,6 @@ class qtype_scmc extends question_type {
      */
     public function save_question_options($question) {
         global $DB;
-print_r($question);exit;
         $context = $question->context;
         $result = new stdClass();
 
@@ -180,7 +179,8 @@ print_r($question);exit;
         $oldrows = $DB->get_records('qtype_scmc_rows',
         array('questionid' => $question->id
         ), 'number ASC');
-
+		$newrows = array();
+		
         for ($i = 1; $i <= $options->numberofrows; ++$i) {
             $row = array_shift($oldrows);
             if (!$row) {
@@ -206,12 +206,22 @@ print_r($question);exit;
             $row->optionfeedbackformat = $question->{'feedback_' . $i}['format'];
 
             $DB->update_record('qtype_scmc_rows', $row);
+			
+			$newrows[$row->id] = $row->id;		
         }
-
+		// Delete any left over old rows.
+		$fs = get_file_storage();
+		foreach ($oldrows as $oldrow) {
+			if (!in_array($oldrow->id, $newrows)) {
+					$fs->delete_area_files($context->id, 'qtype_scmc', 'optiontext', $oldrow->id);
+					$fs->delete_area_files($context->id, 'qtype_scmc', 'feedbacktext', $oldrow->id);
+					$DB->delete_records('qtype_scmc_rows', array('id' => $oldrow->id));		
+			}
+		}
         $oldcolumns = $DB->get_records('qtype_scmc_columns',
         array('questionid' => $question->id
         ), 'number ASC');
-
+		$newcols = array();
         // Insert all new columns.
         for ($i = 1; $i <= $options->numberofcolumns; ++$i) {
             $column = array_shift($oldcolumns);
@@ -229,13 +239,21 @@ print_r($question);exit;
             $column->responsetext = $question->{'responsetext_' . $i};
             $column->responsetextformat = FORMAT_MOODLE;
             $DB->update_record('qtype_scmc_columns', $column);
+			$newcols[$column->id] = $column->id;	
         }
+		
+		// Delete any left over old columns.
+		foreach ($oldcolumns as $oldcolumn) {
+			if (!in_array($oldcolumn->id, $newcols)) {
+					$DB->delete_records('qtype_scmc_columns', array('id' => $oldcolumn->id));		
+			}
+		}
 
         // Set all the new weights.
         $oldweightrecords = $DB->get_records('qtype_scmc_weights',
         array('questionid' => $question->id
         ), 'rownumber ASC, columnnumber ASC');
-
+		$newweights = array();
         // Put the old weights into an array.
         $oldweights = $this->weight_records_to_array($oldweightrecords);
 
@@ -263,8 +281,15 @@ print_r($question);exit;
                     $weight->weight = 0.0;
                 }
                 $DB->update_record('qtype_scmc_weights', $weight);
+				$newweights[$weight->id] = $weight->id;
             }
         }
+		// Delete any left over old weights.
+		foreach ($oldweightrecords as $oldweightrecord) {
+			if (!in_array($oldweightrecord->id, $newweights)) {
+					$DB->delete_records('qtype_scmc_weights', array('id' => $oldweightrecord->id));		
+			}
+		}
     }
 
     /**
