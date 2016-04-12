@@ -1,7 +1,7 @@
-Das Skript mig_matrix_to_scmc.php migriert alte ETHZ Matrix Fragen in
+﻿Das Skript mig_multichoice_to_scmc.php migriert alte ETHZ multichoice Fragen in
 den neuen Fragentyp qtype_scmc. Es werden keine Fragen überschrieben
 oder gelöscht, sondern immer nur neue Fragen erstellt. Es werden nur
-Matrix Fragen migriert, die höchstens vier Optionen und höchstens 2
+multichoice Fragen migriert, die höchstens vier Optionen und höchstens 2
 Anworten haben.
 
 Nur Website-Administratoren dürfen das Skript ausführen. 
@@ -21,9 +21,9 @@ Das Skript akzeptiert folgende Parameter in der URL:
    Einschränkungen.  Default 0.
 
 Ein Aufruf geschieht dann in einem Browser z.B. wiefolgt:
-   <URL zum Moodle>/question/type/scmc/bin/mig_matrix_to_scmc.php?courseid=12345&dryrun=1
+   <URL zum Moodle>/question/type/scmc/bin/mig_multichoice_to_scmc.php?courseid=12345&dryrun=1
 oder 
-   <URL zum Moodle>/question/type/scmc/bin/mig_matrix_to_scmc.php?categoryid=56789&dryrun=1
+   <URL zum Moodle>/question/type/scmc/bin/mig_multichoice_to_scmc.php?categoryid=56789&dryrun=1 
 
 Sobald dryrun nicht angegeben wird (oder auf 0 gesetzt wird), wird die
 Migration durchgeführt. Da keine Fragen gelöscht werden, kann die
@@ -32,7 +32,7 @@ neue scmc Fragen hinzugefügt.
 
 Die Bewertungsmethoden werden wiefolgt migriert:
 
-    Matrix Methode       scmc Methode
+    multichoice Methode       scmc Methode
        'all'         =>   'subpoints'
        'kany'        =>   'scmc'
        'scmc'      =>   'scmconezero'

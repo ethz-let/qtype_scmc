@@ -85,7 +85,7 @@ class qtype_scmc_renderer extends qtype_renderer {
 		global $CFG;
         $question = $qa->get_question();
         $response = $question->get_response($qa);
-
+		
         $inputname = $qa->get_qt_field_name('option');
         $inputattributes = array('type' => $this->get_input_type(), 'name' => $inputname
         );
