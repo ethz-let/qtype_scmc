@@ -460,7 +460,7 @@ class qtype_scmc extends question_type {
         $fs = get_file_storage();
 
         $rowids = $DB->get_records_menu('qtype_scmc_rows',
-        array('question' => $questionid
+        array('questionid' => $questionid
         ), 'id', 'id,1');
         foreach ($rowids as $rowid => $notused) {
             $fs->move_area_files_to_new_context($oldcontextid, $newcontextid, 'qtype_scmc',
