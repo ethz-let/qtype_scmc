@@ -183,7 +183,7 @@ foreach ($questions as $question) {
     // Create a new scmc question in the same category.
     unset($question->id);
     $question->qtype = 'scmc';
-    $question->name = $question->name . ' (NEW55 scmc)';
+    $question->name = $question->name . ' (scmc)';
     $question->timecreated = time();
     $question->timemodified = time();
     $question->modifiedby = $USER->id;
