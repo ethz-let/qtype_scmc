@@ -143,17 +143,20 @@ class qtype_scmc_renderer extends qtype_renderer {
 
                 $buttonname = $qa->get_field_prefix() . $field;
 				$buttonid = 'qtype_scmc_' . $qa->get_field_prefix() . $field;
-				$datacol = 'data-scmc="qtype_scmc_' . $question->id . '"';
+				$qtype_scmc_id = 'qtype_scmc_' . $question->id;
+				$datacol = 'data-scmc="' . $qtype_scmc_id . '"';
                 $ischecked = false;
                 if (array_key_exists($field, $response) && ($response[$field] == $column->number)) {
                     $ischecked = true;
                 }
 				if (count($question->columns) > 1) {
 					$datamulti = 'data-multiscmc="1"';
+					$singleormulti = 2;
 				} else {
 					$datamulti = 'data-multiscmc="0"';
+					$singleormulti = 1;
 				}
-                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol, $datamulti);
+                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol, $datamulti, $singleormulti, $qtype_scmc_id);
                 // Show correctness icon with radio button if needed.
                 if ($displayoptions->correctness && count($question->columns) > 1) {
                     $weight = $question->weight($row->number, $column->number);
@@ -232,14 +235,27 @@ class qtype_scmc_renderer extends qtype_renderer {
      *
      * @return string
      */
-    protected static function radiobutton($name, $value, $checked, $readonly, $id = '', $datacol = '', $datamulti = '') {
+    protected static function radiobutton($name, $value, $checked, $readonly, $id = '', $datacol = '', $datamulti = '', $singleormulti = 2, $qtype_scmc_id = '') {
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
+		$result = '';
+		
 		if ($id == '') {
 			$id = $name;
 		}
-        return '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
+		if ($singleormulti >= 2){			
+			$result .= '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
                  $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
+		} else {
+			
+			$result .= '<input type="hidden" id="hidden_'. $id .'" name="'. $name .'" value="" data-hiddenscmc="' . $qtype_scmc_id .  '" disabled="disabled">';	 
+			
+			$result .= '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
+                 $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
+ 
+			
+		}
+		return $result;
     }
 
     /**

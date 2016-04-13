@@ -68,3 +68,7 @@ $string['tasktitle'] = 'Task title';
 $string['true'] = 'True';
 $string['optionsandfeedback'] = 'Options and Feedback';
 $string['correctresponse'] = 'Correct Response';
+$string['answersingleyes'] = 'One answer only';
+$string['answersingleno'] = 'Multiple answers';
+$string['numberofcolumns'] = 'One or multiple answers?';
+$string['numberofrows'] = 'Number of options';

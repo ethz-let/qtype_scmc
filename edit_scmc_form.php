@@ -138,8 +138,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question'),
         array('rows' => 10), $this->editoroptions);
         $mform->setType('generalfeedback', PARAM_RAW);
-        $mform->addHelpButton('generalfeedback', 'generalfeedback', 'qtype_scmc');//print_r($this->question);
-		//echo "XXXXXXXXX".$this->question->options->answernumbering;exit;
+        $mform->addHelpButton('generalfeedback', 'generalfeedback', 'qtype_scmc');
 		$mform->addElement('select', 'answernumbering',
                 get_string('answernumbering', 'qtype_scmc'),
                 qtype_scmc::get_numbering_styles());
@@ -198,15 +197,8 @@ class qtype_scmc_edit_form extends question_edit_form {
         if (isset($this->question->options->columns) && count($this->question->options->columns) > 0) {
             $this->numberofcolumns = count($this->question->options->columns);
         } else {
-            $this->numberofcolumns = 2;
+            $this->numberofcolumns = 1;
         }
-		/*
-        $mform->addElement('hidden', 'numberofrows', $this->numberofrows);
-        $mform->setType('numberofrows', PARAM_INT);			
-        $mform->addElement('hidden', 'numberofcolumns', $this->numberofcolumns);
-        $mform->setType('numberofcolumns', PARAM_INT);
-		*/
-		
 		$this->editoroptions['changeformat'] = 1;
 		$menu = array(
 			1 => get_string('answersingleyes', 'qtype_scmc'),
@@ -214,7 +206,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         );
 		$mform->addElement('select', 'numberofcolumns',
         get_string('numberofcolumns', 'qtype_scmc'), $menu);
-        $mform->setDefault('numberofcolumns', 2);
+        $mform->setDefault('numberofcolumns', 1);
 		
 		$numberoptionsmenu = array(
             2 => 2,
@@ -233,8 +225,32 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$mform->addElement('select', 'numberofrows',
         get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
         $mform->setDefault('numberofrows', 3);
+		
+		$mform->addElement('header', 'scoringmethodheader',
+        get_string('scoringmethod', 'qtype_scmc'));
+        // Add the scoring method radio buttons.
+        $attributes = array();
+        $scoringbuttons = array();
+		/*
+        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
+                get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
+		*/
+        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
+                get_string('scoringsubpoints', 'qtype_scmc'), 'subpoints', $attributes);
+		$scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
+                get_string('scoringscmconezero', 'qtype_scmc'), 'scmconezero', $attributes);
+        $mform->addGroup($scoringbuttons, 'radiogroupscoring',
+        get_string('scoringmethod', 'qtype_scmc'), array(' <br/> '), false);
+        $mform->addHelpButton('radiogroupscoring', 'scoringmethod', 'qtype_scmc');
+        $mform->setDefault('scoringmethod', 'subpoints');
+
+        // Add the shuffleoptions checkbox.
+        $mform->addElement('advcheckbox', 'shuffleoptions',
+        get_string('shuffleoptions', 'qtype_scmc'), null, null, array(0, 1));
+        $mform->addHelpButton('shuffleoptions', 'shuffleoptions', 'qtype_scmc');
+		
         $mform->addElement('header', 'optionsandfeedbackheader',
-                get_string('optionsandfeedback', 'qtype_scmc'));
+                get_string('optionsandfeedback', 'qtype_scmc'));		
 
         // Add the response text fields.
 		$mform->addElement('html', '<span id="judgmentoptionsspan">');
@@ -337,28 +353,7 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->addElement('html', '</div>'); // Close div.feedbacktext.
             $mform->addElement('html', '</div><br />'); // Close div.optionbox.
         }
-        $mform->addElement('header', 'scoringmethodheader',
-        get_string('scoringmethod', 'qtype_scmc'));
-        // Add the scoring method radio buttons.
-        $attributes = array();
-        $scoringbuttons = array();
-		/*
-        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
-                get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
-		*/
-        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
-                get_string('scoringsubpoints', 'qtype_scmc'), 'subpoints', $attributes);
-		$scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
-                get_string('scoringscmconezero', 'qtype_scmc'), 'scmconezero', $attributes);
-        $mform->addGroup($scoringbuttons, 'radiogroupscoring',
-        get_string('scoringmethod', 'qtype_scmc'), array(' <br/> '), false);
-        $mform->addHelpButton('radiogroupscoring', 'scoringmethod', 'qtype_scmc');
-        $mform->setDefault('scoringmethod', 'subpoints');
 
-        // Add the shuffleoptions checkbox.
-        $mform->addElement('advcheckbox', 'shuffleoptions',
-        get_string('shuffleoptions', 'qtype_scmc'), null, null, array(0, 1));
-        $mform->addHelpButton('shuffleoptions', 'shuffleoptions', 'qtype_scmc');
 
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);
@@ -389,8 +384,8 @@ class qtype_scmc_edit_form extends question_edit_form {
             $question->scoringmethod = $question->options->scoringmethod;
             $question->rows = $question->options->rows;
             $question->columns = $question->options->columns;
-            $question->numberofrows = $question->options->numberofrows; //count($question->rows);
-            $question->numberofcolumns = $question->options->numberofcolumns; //count($question->columns);
+            $question->numberofrows = $question->options->numberofrows;
+            $question->numberofcolumns = $question->options->numberofcolumns;
         }
 
         if (isset($this->question->id)) {
@@ -427,7 +422,6 @@ class qtype_scmc_edit_form extends question_edit_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         // Check for empty option texts.
-		//echo "rows: ".$data['numberofrows']." and cols: ".$data['numberofcolumns'];exit;
         for ($i = 1; $i <= $data['numberofrows']; ++$i) {
             $optiontext = $data['option_' . $i]['text'];
             // Remove HTML tags.

@@ -46,9 +46,16 @@
 					if (loadorchanged == 'changed') {
 						$(scmcradionegative).attr('checked', true); // Tick all FALSE radios
 					}
-					$('#id_scoringmethod_scmconezero').attr('checked', true); // ALWAYS MC1/0
+					// id_scoringmethod_scmconezero
+					// Hide scoring methods.
+					$('#id_scoringmethod_subpoints').attr('checked', true); // ALWAYS subpoints
 					$('#id_scoringmethod_subpoints').hide(); // Do not allow change
 					$('#id_scoringmethod_subpoints').parent().hide(); // Do not allow change
+					
+					$('#id_scoringmethod_scmconezero').attr('checked', false); // ALWAYS subpoints
+					$('#id_scoringmethod_scmconezero').hide(); // Do not allow change
+					$('#id_scoringmethod_scmconezero').parent().hide(); // Do not allow change
+					
 					
 				} else{
 					$('#judgmentoptionsspan').show();
@@ -56,6 +63,8 @@
 					$(scmcradionegative).parent().show(); // Show the label of radio button
 					$('#id_scoringmethod_subpoints').show();
 					$('#id_scoringmethod_subpoints').parent().show();
+					$('#id_scoringmethod_scmconezero').show();
+					$('#id_scoringmethod_scmconezero').parent().show();
 				}
 				
 				// If changed by human, then tick first TRUE

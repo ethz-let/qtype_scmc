@@ -6,11 +6,17 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 $.noConflict();
 (function ($) {
     $(document).ready(function () {
+		//$('input[data-hiddenscmc~="hidden_"]').attr("disabled", true); // not needed specifically..
 		$('input[data-scmc^=qtype_scmc]').on('click', function() {
 		 if ( $(this).attr("data-multiscmc") == 0 ) {
 			var radioscmcid = $(this).attr('id');
 			var radioscmcdatascmc = $(this).attr('data-scmc');
 			$('input[data-scmc="'+radioscmcdatascmc+'"]').prop('checked', false);
+			
+			
+			$('input[data-hiddenscmc="'+radioscmcdatascmc+'"]').attr("disabled", false); // remove all values from hidden
+			$('input[id="hidden_' + radioscmcid + '"]').val("disabled", true); // remove all values from hidden
+			
 			$('input[id="' + radioscmcid + '"]').prop('checked', true); // Tick the originally clicked on radio
 		 }
 		});
