@@ -26,7 +26,7 @@ abstract class qtype_scmc_grading {
     abstract public function get_title();
 
     abstract public function grade_question($question, $answers);
-
+	
     /**
      * Grade a specific row.
      * This is the same for all grading methods.

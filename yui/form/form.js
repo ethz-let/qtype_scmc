@@ -48,16 +48,16 @@
 					}
 					// id_scoringmethod_scmconezero
 					// Hide scoring methods.
-					$('#id_scoringmethod_subpoints').attr('checked', true); // ALWAYS subpoints
+					$('#id_scoringmethod_subpoints').attr('checked', false); // ALWAYS subpoints
 					$('#id_scoringmethod_subpoints').hide(); // Do not allow change
 					$('#id_scoringmethod_subpoints').parent().hide(); // Do not allow change
 					
-					$('#id_scoringmethod_scmconezero').attr('checked', false); // ALWAYS subpoints
+					$('#id_scoringmethod_scmconezero').attr('checked', true); // ALWAYS subpoints
 					$('#id_scoringmethod_scmconezero').hide(); // Do not allow change
 					$('#id_scoringmethod_scmconezero').parent().hide(); // Do not allow change
 					
 					
-				} else{
+				} else {
 					$('#judgmentoptionsspan').show();
 					$(scmcradionegative).show();
 					$(scmcradionegative).parent().show(); // Show the label of radio button

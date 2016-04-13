@@ -70,6 +70,7 @@ $string['tasktitle'] = 'Aufgabentitel';
 $string['true'] = 'Richtig';
 $string['optionsandfeedback'] = 'Text und Feedback';
 $string['correctresponse'] = 'Richtige Antwort';
+$string['incorrect'] = 'Falsch';
 $string['answersingleyes'] = 'Nur eine Antwort erlauben';
 $string['answersingleno'] = 'Mehrere Antworten';
 $string['numberofcolumns'] = 'Eine oder mehrere Antworten?';

@@ -158,7 +158,7 @@ class qtype_scmc_renderer extends qtype_renderer {
 				}
                 $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol, $datamulti, $singleormulti, $qtype_scmc_id);
                 // Show correctness icon with radio button if needed.
-                if ($displayoptions->correctness && count($question->columns) > 1) {
+                if ($displayoptions->correctness /*&& count($question->columns) > 1*/) {
                     $weight = $question->weight($row->number, $column->number);
                     $radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
                              '</span>';
@@ -181,12 +181,12 @@ class qtype_scmc_renderer extends qtype_renderer {
             $isselected = $question->is_answered($response, $key);
             // For correctness we have to grade the option...
             if ($displayoptions->correctness) {
-				if (count($question->columns) > 1) {
+				//if (count($question->columns) > 1) {
 					$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
 					$cell = new html_table_cell($this->feedback_image($rowgrade));
 					$cell->attributes['class'] = 'scmccorrectness';
 					$rowdata[] = $cell;
-				} else {
+				/*} else {
 					if ($isselected) {
 						$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
 						$cell = new html_table_cell($this->feedback_image($rowgrade));
@@ -197,8 +197,7 @@ class qtype_scmc_renderer extends qtype_renderer {
 						$cell->attributes['class'] = 'scmccorrectness';
 						$rowdata[] = $cell;
 					}
-				}
-
+				}*/
             }
 
             // Add the feedback to the table, if it is visible.
@@ -248,7 +247,7 @@ class qtype_scmc_renderer extends qtype_renderer {
                  $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
 		} else {
 			
-			$result .= '<input type="hidden" id="hidden_'. $id .'" name="'. $name .'" value="" data-hiddenscmc="' . $qtype_scmc_id .  '" disabled="disabled">';	 
+			$result .= '<input type="hidden" id="hidden_'. $id .'" name="'. $name .'" value="2" data-hiddenscmc="' . $qtype_scmc_id .  '" disabled="disabled">';	 
 			
 			$result .= '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
                  $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
@@ -284,13 +283,11 @@ class qtype_scmc_renderer extends qtype_renderer {
 				if (isset($question->columns[$correctresponse[$rowid]])){
 					$correctcolumn = $question->columns[$correctresponse[$rowid]];
 				}
-			}
-            
-			if (!$correctcolumn) {
+			} else {
 				$correctcolumn = new stdClass;
 				$correctcolumn->responsetextformat = 1;
 				$correctcolumn->responsetext = get_string('false','qtype_scmc');
-				$correctcolumn->id = $correctresponse[$rowid];
+				$correctcolumn->id = $rowid;
 			}
 
 

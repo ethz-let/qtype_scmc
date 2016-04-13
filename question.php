@@ -143,7 +143,12 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
     public function weight($row = null, $col = null) {
         $rownumber = is_object($row) ? $row->number : $row;
         $colnumber = is_object($col) ? $col->number : $col;
-        $weight = (float) $this->weights[$rownumber][$colnumber]->weight;
+		if (isset($this->weights[$rownumber][$colnumber])) {
+			$weight = (float) $this->weights[$rownumber][$colnumber]->weight;
+		} else {
+			$weight = 0;
+		}
+        
         return $weight;
     }
 
@@ -346,10 +351,8 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
      */
     public function grading() {
         global $CFG;
-
         $type = $this->scoringmethod;
         $gradingclass = 'qtype_scmc_grading_' . $type;
-
         require_once($CFG->dirroot . '/question/type/scmc/grading/' . $gradingclass . '.class.php');
 
         return new $gradingclass();
@@ -369,8 +372,7 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
         $grade = $this->grading()->grade_question($this, $response);
         $state = question_state::graded_state_for_fraction($grade);
 
-        return array($grade, $state
-        );
+        return array($grade, $state);
     }
 
     /**
