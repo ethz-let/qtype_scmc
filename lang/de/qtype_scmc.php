@@ -59,9 +59,7 @@ $string['responsetexts'] = 'Bewertungsoptionen';
 $string['save'] = 'Speichern';
 $string['scoringscmconezero'] = 'MC1/0';
 $string['scoringmethod'] = 'Bewertung';
-$string['scoringmethod_help'] = '<strong>MC1/0:</strong> Bei der Auswahl „MC1/0“ erhalten Kandidaten einen Punkt,
-         wenn alle Wahlantworten richtig bewertet wurden und null Punkte sonst. <br/><strong>Teilpunkte:</strong> Bei der Auswahl
-         „Teilpunkte“ erhalten Kandidaten Teilpunkte für jede richtige Bewertung.';
+$string['scoringmethod_help'] = '<strong>MC1/0:</strong> Bei der Auswahl „Kprim1/0“ erhalten Kandidat/innen die volle Punktzahl, wenn alle Wahlantworten richtig bewertet wurden und null Punkte sonst. <br/><strong>Teilpunkte:</strong> Bei der Auswahl „Teilpunkte“ erhalten Kandidat/innen Teilpunkte für jede richtige Bewertung.';
 $string['scoringsubpoints'] = 'Teilpunkte';
 $string['shuffleoptions'] = 'Wahlantworten mischen';
 $string['shuffleoptions_help'] = 'Wenn aktiviert, ist die Reihenfolge der Wahlantworten bei jedem Versuch zufällig, sofern die Option „In Fragen zufällig mischen“ aktiviert ist.';

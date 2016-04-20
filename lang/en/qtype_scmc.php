@@ -57,7 +57,7 @@ $string['responsetexts'] = 'Judgement options';
 $string['save'] = 'Save';
 $string['scoringscmconezero'] = 'MC1/0';
 $string['scoringmethod'] = 'Scoring method';
-$string['scoringmethod_help'] = '<strong>MC1/0:</strong> The student receives one point if all responses are correct, and zero points otherwise.
+$string['scoringmethod_help'] = '<strong>MC1/0:</strong> The student receives full marks if all responses are correct, and zero points otherwise.
         <br/><strong>Subpoints:</strong> The student is awarded subpoints for each correct response.';
 $string['scoringsubpoints'] = 'Subpoints';
 $string['shuffleoptions'] = 'Shuffle options';
