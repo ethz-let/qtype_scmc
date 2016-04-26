@@ -143,16 +143,16 @@ class qtype_scmc_edit_form extends question_edit_form {
                 get_string('answernumbering', 'qtype_scmc'),
                 qtype_scmc::get_numbering_styles());
 		if (!empty($this->question->options->answernumbering)){
-			$mform->setDefault('answernumbering', array($this->question->options->answernumbering));	
-		}		
+			$mform->setDefault('answernumbering', array($this->question->options->answernumbering));
+		}
         // Any questiontype specific fields.
         $this->definition_inner($mform);
-
+        /*
         if (!empty($CFG->usetags)) {
             $mform->addElement('header', 'tagsheader', get_string('tags'));
             $mform->addElement('tags', 'tags', get_string('tags'));
         }
-
+        */
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
                     get_string('createdmodifiedheader', 'question'));
@@ -188,7 +188,7 @@ class qtype_scmc_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
         $scmcconfig = get_config('qtype_scmc');
-		
+
         if (isset($this->question->options->rows) && count($this->question->options->rows) > 0) {
             $this->numberofrows = count($this->question->options->rows);
         } else {
@@ -207,7 +207,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$mform->addElement('select', 'numberofcolumns',
         get_string('numberofcolumns', 'qtype_scmc'), $menu);
         $mform->setDefault('numberofcolumns', 1);
-		
+
 		$numberoptionsmenu = array(
             2 => 2,
             3 => 3,
@@ -225,7 +225,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$mform->addElement('select', 'numberofrows',
         get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
         $mform->setDefault('numberofrows', 3);
-		
+
 		$mform->addElement('header', 'scoringmethodheader',
         get_string('scoringmethod', 'qtype_scmc'));
         // Add the scoring method radio buttons.
@@ -248,9 +248,9 @@ class qtype_scmc_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'shuffleoptions',
         get_string('shuffleoptions', 'qtype_scmc'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleoptions', 'shuffleoptions', 'qtype_scmc');
-		
+
         $mform->addElement('header', 'optionsandfeedbackheader',
-                get_string('optionsandfeedback', 'qtype_scmc'));		
+                get_string('optionsandfeedback', 'qtype_scmc'));
 
         // Add the response text fields.
 		$mform->addElement('html', '<span id="judgmentoptionsspan">');
@@ -279,7 +279,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 				for ($i = count($this->question->options->columns) + 1; $i <= QTYPE_SCMC_NUMBER_OF_RESPONSES; $i++ ) {
 					// Always default it to second options values...
 					$responsetexts[] = get_string('responsetext2', 'qtype_scmc');
-				}				
+				}
 			}
         } else {
             $responsetexts[] = get_string('responsetext1', 'qtype_scmc');
@@ -308,7 +308,7 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->addElement('html', '<div class="responses">'); // Open div.responses.
             $radiobuttons = array();
 			$radiobuttonname = 'weightbutton_' . $i;
-			
+
             for ($j = 1; $j <= 2; ++$j) {
 				if ($j == 1){
 					$negativeorpositive = 'positive'; // Usually TRUE
@@ -318,18 +318,18 @@ class qtype_scmc_edit_form extends question_edit_form {
 				$attributes = array('data-colscmc'=>$negativeorpositive);
 				/*
 				if (2 >= 2) { //disable all other exclusive radios
-					$radiobuttonname = 'weightbutton_' . $i;	
+					$radiobuttonname = 'weightbutton_' . $i;
 				} else {
-					$radiobuttonname = 'weightbutton[]';						
+					$radiobuttonname = 'weightbutton[]';
 				}
 				*/
-				
+
                 if (array_key_exists($j - 1, $responsetexts)) {
                     $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '',
                             $responsetexts[$j - 1], $j, $attributes);
-                } else { 
+                } else {
                     $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '', '',
-                            $j, $attributes); 
+                            $j, $attributes);
                 }
             }
             $mform->addGroup($radiobuttons, $radiobuttonname, '', array('<br/>'
@@ -362,7 +362,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 
         $this->add_hidden_fields();
     }
-	
+
     public function js_call() {
         global $PAGE;
         foreach (array_keys(get_string_manager()->load_component_strings('qtype_scmc', current_language())) as $string) {
