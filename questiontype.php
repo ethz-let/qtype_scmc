@@ -48,7 +48,7 @@ class qtype_scmc extends question_type {
             $question->options->numberofrows = QTYPE_SCMC_NUMBER_OF_OPTIONS;
         }
         if (!isset($question->options->numberofcolumns)) {
-            $question->options->numberofcolumns = QTYPE_SCMC_NUMBER_OF_RESPONSES;
+            $question->options->numberofcolumns = 1; //QTYPE_SCMC_NUMBER_OF_RESPONSES;
         }
         if (!isset($question->options->shuffleoptions)) {
             $question->options->shuffleoptions = $scmcconfig->shuffleoptions;
@@ -180,7 +180,7 @@ class qtype_scmc extends question_type {
         array('questionid' => $question->id
         ), 'number ASC');
 		$newrows = array();
-		
+
         for ($i = 1; $i <= $options->numberofrows; ++$i) {
             $row = array_shift($oldrows);
             if (!$row) {
@@ -206,8 +206,8 @@ class qtype_scmc extends question_type {
             $row->optionfeedbackformat = $question->{'feedback_' . $i}['format'];
 
             $DB->update_record('qtype_scmc_rows', $row);
-			
-			$newrows[$row->id] = $row->id;		
+
+			$newrows[$row->id] = $row->id;
         }
 		// Delete any left over old rows.
 		$fs = get_file_storage();
@@ -215,7 +215,7 @@ class qtype_scmc extends question_type {
 			if (!in_array($oldrow->id, $newrows)) {
 					$fs->delete_area_files($context->id, 'qtype_scmc', 'optiontext', $oldrow->id);
 					$fs->delete_area_files($context->id, 'qtype_scmc', 'feedbacktext', $oldrow->id);
-					$DB->delete_records('qtype_scmc_rows', array('id' => $oldrow->id));		
+					$DB->delete_records('qtype_scmc_rows', array('id' => $oldrow->id));
 			}
 		}
         $oldcolumns = $DB->get_records('qtype_scmc_columns',
@@ -239,13 +239,13 @@ class qtype_scmc extends question_type {
             $column->responsetext = $question->{'responsetext_' . $i};
             $column->responsetextformat = FORMAT_MOODLE;
             $DB->update_record('qtype_scmc_columns', $column);
-			$newcols[$column->id] = $column->id;	
+			$newcols[$column->id] = $column->id;
         }
-		
+
 		// Delete any left over old columns.
 		foreach ($oldcolumns as $oldcolumn) {
 			if (!in_array($oldcolumn->id, $newcols)) {
-					$DB->delete_records('qtype_scmc_columns', array('id' => $oldcolumn->id));		
+					$DB->delete_records('qtype_scmc_columns', array('id' => $oldcolumn->id));
 			}
 		}
 
@@ -287,7 +287,7 @@ class qtype_scmc extends question_type {
 		// Delete any left over old weights.
 		foreach ($oldweightrecords as $oldweightrecord) {
 			if (!in_array($oldweightrecord->id, $newweights)) {
-					$DB->delete_records('qtype_scmc_weights', array('id' => $oldweightrecord->id));		
+					$DB->delete_records('qtype_scmc_weights', array('id' => $oldweightrecord->id));
 			}
 		}
     }
@@ -407,7 +407,7 @@ class qtype_scmc extends question_type {
 
         return $parts;
     }
-	
+
     /**
      * @return array of the numbering styles supported. For each one, there
      *      should be a lang string answernumberingxxx in teh qtype_scmc
@@ -422,7 +422,7 @@ class qtype_scmc extends question_type {
         }
         return $styles;
     }
-	
+
     /**
      * (non-PHPdoc).
      *
@@ -600,7 +600,7 @@ class qtype_scmc extends question_type {
         $question->answernumbering = $format->getpath($data,
         array('#', 'answernumbering', 0, '#'
         ), 'none');
-		
+
         $rows = $data['#']['row'];
         $i = 1;
         foreach ($rows as $row) {

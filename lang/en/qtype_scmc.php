@@ -73,3 +73,5 @@ $string['answersingleyes'] = 'One answer only';
 $string['answersingleno'] = 'Multiple answers';
 $string['numberofcolumns'] = 'One or multiple answers?';
 $string['numberofrows'] = 'Number of options';
+$string['numberofcolumns_help'] = 'numberofcolumns_help (single or multi) HELP TEXT HERE';
+$string['numberofrows_help'] = 'numberofrows_help (No of options) HELP TEXT HERE';

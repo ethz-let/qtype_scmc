@@ -33,7 +33,7 @@
 					var radioscmcid = $(this).attr('id');
 					$('input[data-colscmc="positive"]').attr('checked', false); // UN-Tick all TRUE radios
 					$('input[data-colscmc="negative"]').attr('checked', true); // Tick all FALSE radios
-					$('#'+radioscmcid).prop('checked', true); // Tick the originally clicked on radio
+					 $('#'+radioscmcid).prop('checked', true); // Tick the originally clicked on radio
 				}
 			});					
 			scmctypechanged = function(howmanyanswers, loadorchanged){
@@ -45,6 +45,8 @@
 					$(scmcradionegative).parent().hide(); // Hide the label of radios
 					if (loadorchanged == 'changed') {
 						$(scmcradionegative).attr('checked', true); // Tick all FALSE radios
+						// Tobias: untick all; add the below line
+						$(scmcradiopositive).attr('checked', false); // UN-Tick all TRUE radios
 					}
 					// id_scoringmethod_scmconezero
 					// Hide scoring methods.

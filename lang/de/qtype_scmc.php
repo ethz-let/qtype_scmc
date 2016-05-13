@@ -73,3 +73,5 @@ $string['answersingleyes'] = 'Nur eine Antwort erlauben';
 $string['answersingleno'] = 'Mehrere Antworten';
 $string['numberofcolumns'] = 'Eine oder mehrere Antworten?';
 $string['numberofrows'] = 'Anzahl Wahlantworten';
+$string['numberofcolumns_help'] = 'numberofcolumns_help (single or multi) HELP TEXT HERE';
+$string['numberofrows_help'] = 'numberofrows_help (No of options) HELP TEXT HERE';

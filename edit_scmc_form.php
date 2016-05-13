@@ -207,6 +207,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$mform->addElement('select', 'numberofcolumns',
         get_string('numberofcolumns', 'qtype_scmc'), $menu);
         $mform->setDefault('numberofcolumns', 1);
+        $mform->addHelpButton('numberofcolumns', 'numberofcolumns', 'qtype_scmc');
 
 		$numberoptionsmenu = array(
             2 => 2,
@@ -225,6 +226,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$mform->addElement('select', 'numberofrows',
         get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
         $mform->setDefault('numberofrows', 3);
+        $mform->addHelpButton('numberofrows', 'numberofrows', 'qtype_scmc');
 
 		$mform->addElement('header', 'scoringmethodheader',
         get_string('scoringmethod', 'qtype_scmc'));
