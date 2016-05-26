@@ -40,7 +40,7 @@ class backup_qtype_scmc_plugin extends backup_qtype_plugin {
         $plugin->add_child($pluginwrapper);
         // Now create the qtype own structures.
         $scmc = new backup_nested_element('scmc', array('id'
-        ), array('scoringmethod', 'shuffleoptions', 'numberofrows', 'numberofcolumns'));
+        ), array('scoringmethod', 'shuffleoptions', 'numberofrows', 'numberofcolumns', 'answernumbering'));
         $rows = new backup_nested_element('rows');
         $row = new backup_nested_element('row', array('id'
         ), array('number', 'optiontext', 'optiontextformat', 'optionfeedback', 'optionfeedbackformat'));
