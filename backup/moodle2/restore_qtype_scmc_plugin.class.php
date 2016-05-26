@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package qtype_kprime
+ * @package qtype_scmc
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
@@ -24,9 +24,9 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Restore plugin class that provides the necessary information
- * needed to restore one kprime qtype plugin.
+ * needed to restore one scmc qtype plugin.
  */
-class restore_qtype_kprime_plugin extends restore_qtype_plugin {
+class restore_qtype_scmc_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level.
@@ -35,8 +35,8 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
         $result = array();
 
         // We used get_recommended_name() so this works.
-        $elename = 'kprime';
-        $elepath = $this->get_pathfor('/kprime');
+        $elename = 'scmc';
+        $elepath = $this->get_pathfor('/scmc');
         $result[] = new restore_path_element($elename, $elepath);
 
         // We used get_recommended_name() so this works.
@@ -60,7 +60,7 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
     /**
      * Process the qtype/multichoice element.
      */
-    public function process_kprime($data) {
+    public function process_scmc($data) {
         global $DB;
 
         $data = (object) $data;
@@ -73,14 +73,14 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
         $questioncreated = (bool) $this->get_mappingid('question_created', $oldquestionid);
 
         // If the question has been created by restore, we need to create its
-        // qtype_kprime_options too.
+        // qtype_scmc_options too.
         if ($questioncreated) {
             // Adjust some columns.
             $data->questionid = $newquestionid;
             // Insert record.
-            $newitemid = $DB->insert_record('qtype_kprime_options', $data);
+            $newitemid = $DB->insert_record('qtype_scmc_options', $data);
             // Create mapping (needed for decoding links).
-            $this->set_mapping('qtype_kprime_options', $oldid, $newitemid);
+            $this->set_mapping('qtype_scmc_options', $oldid, $newitemid);
         }
     }
 
@@ -97,7 +97,7 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
     }
 
     /**
-     * Process the qtype/kprime/columns/column.
+     * Process the qtype/scmc/columns/column.
      */
     public function process_column($data) {
         global $DB;
@@ -110,12 +110,12 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         $data->questionid = $this->get_new_parentid('question');
-        $newitemid = $DB->insert_record('qtype_kprime_columns', $data);
-        $this->set_mapping('qtype_kprime_columns', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('qtype_scmc_columns', $data);
+        $this->set_mapping('qtype_scmc_columns', $oldid, $newitemid);
     }
 
     /**
-     * Process the qtype/kprime/rows/row element.
+     * Process the qtype/scmc/rows/row element.
      */
     public function process_row($data) {
         global $DB;
@@ -128,13 +128,13 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         $data->questionid = $this->get_new_parentid('question');
-        $newitemid = $DB->insert_record('qtype_kprime_rows', $data);
+        $newitemid = $DB->insert_record('qtype_scmc_rows', $data);
 
-        $this->set_mapping('qtype_kprime_rows', $oldid, $newitemid);
+        $this->set_mapping('qtype_scmc_rows', $oldid, $newitemid);
     }
 
     /**
-     * Process the qtype/kprime/weights/weight element.
+     * Process the qtype/scmc/weights/weight element.
      */
     public function process_weight($data) {
         global $DB;
@@ -147,8 +147,8 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         $data->questionid = $this->get_new_parentid('question');
-        $newitemid = $DB->insert_record('qtype_kprime_weights', $data);
-        $this->set_mapping('qtype_kprime_weights', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('qtype_scmc_weights', $data);
+        $this->set_mapping('qtype_scmc_weights', $oldid, $newitemid);
     }
 
     public function recode_response($questionid, $sequencenumber, array $response) {
@@ -169,7 +169,7 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
     protected function recode_option_order($order) {
         $neworder = array();
         foreach (explode(',', $order) as $id) {
-            if ($newid = $this->get_mappingid('qtype_kprime_rows', $id)) {
+            if ($newid = $this->get_mappingid('qtype_scmc_rows', $id)) {
                 $neworder[] = $newid;
             } else {
                 $neworder[] = $id;
@@ -187,7 +187,7 @@ class restore_qtype_kprime_plugin extends restore_qtype_plugin {
 
         $fields = array('optiontext', 'optionfeedback'
         );
-        $contents[] = new restore_decode_content('qtype_kprime_rows', $fields, 'qtype_kprime_rows');
+        $contents[] = new restore_decode_content('qtype_scmc_rows', $fields, 'qtype_scmc_rows');
 
         return $contents;
     }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package qtype_kprime
+ * @package qtype_scmc
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
@@ -23,23 +23,23 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the backup for kprime questions.
+ * Provides the backup for scmc questions.
  */
-class backup_qtype_kprime_plugin extends backup_qtype_plugin {
+class backup_qtype_scmc_plugin extends backup_qtype_plugin {
 
     /**
      * Returns the qtype information to attach to the question element.
      */
     protected function define_question_plugin_structure() {
         // Define the virtual plugin element with the condition to fulfill.
-        $plugin = $this->get_plugin_element(null, '../../qtype', 'kprime');
+        $plugin = $this->get_plugin_element(null, '../../qtype', 'scmc');
         // Create one standard named plugin element (the visible container).
         $name = $this->get_recommended_name();
         $pluginwrapper = new backup_nested_element($name);
         // Connect the visible container ASAP.
         $plugin->add_child($pluginwrapper);
         // Now create the qtype own structures.
-        $kprime = new backup_nested_element('kprime', array('id'
+        $scmc = new backup_nested_element('scmc', array('id'
         ), array('scoringmethod', 'shuffleoptions', 'numberofrows', 'numberofcolumns'));
         $rows = new backup_nested_element('rows');
         $row = new backup_nested_element('row', array('id'
@@ -49,7 +49,7 @@ class backup_qtype_kprime_plugin extends backup_qtype_plugin {
         $weights = new backup_nested_element('weights');
         $weight = new backup_nested_element('weight', array('id'), array('rownumber', 'columnnumber', 'weight'));
         // Now the qtype tree.
-        $pluginwrapper->add_child($kprime);
+        $pluginwrapper->add_child($scmc);
         $pluginwrapper->add_child($rows);
         $pluginwrapper->add_child($columns);
         $pluginwrapper->add_child($weights);
@@ -57,10 +57,10 @@ class backup_qtype_kprime_plugin extends backup_qtype_plugin {
         $columns->add_child($column);
         $weights->add_child($weight);
         // Set sources to populate the data.
-        $kprime->set_source_table('qtype_kprime_options', array('questionid' => backup::VAR_PARENTID));
-        $row->set_source_table('qtype_kprime_rows', array('questionid' => backup::VAR_PARENTID), 'number ASC');
-        $column->set_source_table('qtype_kprime_columns', array('questionid' => backup::VAR_PARENTID), 'number ASC');
-        $weight->set_source_table('qtype_kprime_weights', array('questionid' => backup::VAR_PARENTID));
+        $scmc->set_source_table('qtype_scmc_options', array('questionid' => backup::VAR_PARENTID));
+        $row->set_source_table('qtype_scmc_rows', array('questionid' => backup::VAR_PARENTID), 'number ASC');
+        $column->set_source_table('qtype_scmc_columns', array('questionid' => backup::VAR_PARENTID), 'number ASC');
+        $weight->set_source_table('qtype_scmc_weights', array('questionid' => backup::VAR_PARENTID));
         // We don't need to annotate ids nor files.
         return $plugin;
     }
@@ -72,7 +72,7 @@ class backup_qtype_kprime_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        return array('optiontext' => 'qtype_kprime_rows', 'feedbacktext' => 'qtype_kprime_rows'
+        return array('optiontext' => 'qtype_scmc_rows', 'feedbacktext' => 'qtype_scmc_rows'
         );
     }
 }
