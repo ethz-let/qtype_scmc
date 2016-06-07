@@ -74,4 +74,3 @@ $string['answersingleno'] = 'Mehrere Antworten';
 $string['numberofcolumns'] = 'Eine oder mehrere Antworten?';
 $string['numberofrows'] = 'Anzahl Wahlantworten';
 $string['numberofcolumns_help'] = '<strong>Nur eine Antwort erlauben</strong>: Verwenden Sie diese Einstellung für Einfachwahlaufgaben. Eine Option muss als die einzig richtige oder beste Antwort identifiziert werden ("eine beste Antwort").<br /><br /><strong>Mehrere Antworten</strong>: Verwenden Sie diese Einstellung für Mehrfachwahlaufgaben. Jede Option muss anhand der gesetzten Kriterien, z.B. wahr/falsch eingeschätzt werden ("mehrfach wahr/falsch").';
-$string['numberofrows_help'] = 'numberofrows_help (No of options) HELP TEXT HERE';

@@ -226,7 +226,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$mform->addElement('select', 'numberofrows',
         get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
         $mform->setDefault('numberofrows', 3);
-        $mform->addHelpButton('numberofrows', 'numberofrows', 'qtype_scmc');
+        //$mform->addHelpButton('numberofrows', 'numberofrows', 'qtype_scmc');
 
 		$mform->addElement('header', 'scoringmethodheader',
         get_string('scoringmethod', 'qtype_scmc'));

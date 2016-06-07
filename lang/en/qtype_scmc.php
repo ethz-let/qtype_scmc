@@ -74,4 +74,3 @@ $string['answersingleno'] = 'Multiple answers';
 $string['numberofcolumns'] = 'One or multiple answers?';
 $string['numberofrows'] = 'Number of options';
 $string['numberofcolumns_help'] = '<strong>One answer only</strong>: use this setting for Single Choice items. One option must be identified as the only correct or best answer ("one best answer").<br /><strong>Multiple answers</strong>: use this setting for Multiple Choice items. All options must be judged individually according to the criteria provided, e.g. true/false ("multiple true-false").';
-$string['numberofrows_help'] = 'numberofrows_help (No of options) HELP TEXT HERE';
