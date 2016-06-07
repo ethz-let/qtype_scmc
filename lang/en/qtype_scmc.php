@@ -57,8 +57,7 @@ $string['responsetexts'] = 'Judgement options';
 $string['save'] = 'Save';
 $string['scoringscmconezero'] = 'MC1/0';
 $string['scoringmethod'] = 'Scoring method';
-$string['scoringmethod_help'] = '&laquo;Available Only for Multiple Choice Type&raquo;<br /><strong>MC1/0:</strong> The student receives full marks if all responses are correct, and zero points otherwise.
-        <br/><strong>Subpoints:</strong> The student is awarded subpoints for each correct response.';
+$string['scoringmethod_help'] = '&laquo;Only for selection "multiple answers allowed" there are two scoring methods.&raquo;<br /><strong>Subpoints:</strong> The student is awarded subpoints for each correct response.<br/><strong>MC1/0:</strong> The student receives full points if all responses are correct, and zero points otherwise.';
 $string['scoringsubpoints'] = 'Subpoints';
 $string['shuffleoptions'] = 'Shuffle options';
 $string['shuffleoptions_help'] = 'If enabled, the order of the options is randomly shuffled for each attempt,
