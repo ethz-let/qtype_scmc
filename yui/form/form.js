@@ -77,24 +77,44 @@
 			scmcnumberchanged = function(numberofrows, loadorchanged){
 				numberofrows = parseInt(numberofrows);
 				var maxscmcoptions = 5;
+				var allowedtochangeresult = 1;
 				var optionboxes = '#optionbox_response_';
+				var lasttimerows = $("input[name=qtype_scmc_lastnumberofcols]").val();
 				var remainingscmcoptions = maxscmcoptions - numberofrows;
-				
-				if (numberofrows < maxscmcoptions) { // if I have more but want less..
-					// hide all the maxscmcoptions	- if confirmed
-					for (i = maxscmcoptions; i > numberofrows; i--) { 
-						$(optionboxes+i).hide();
-					}
-					// Show all the numberofrows again					
-					for (i = 1; i <= numberofrows; i++) {
-						$(optionboxes+i).show();
-					}
-				
-				} else { // if I have less but want more..
-					for (i = 1; i <= maxscmcoptions; i++) {
-						$(optionboxes+i).show();
-					}						
+
+				if (lasttimerows > numberofrows) {
+					var scmcdiffraws = lasttimerows - numberofrows;
+					 if (confirm(M.util.get_string('deleterawswarning', 'qtype_scmc', scmcdiffraws))) {
+						 allowedtochangeresult = 1;
+					 } else {
+						allowedtochangeresult = 0;
+						// reset the select box to original number
+						$("#id_numberofrows").val(lasttimerows);
+					 }
 				}
+				
+				if (allowedtochangeresult == 1) {				
+					// set the current no of rows to choosen one.
+					$("input[name=qtype_scmc_lastnumberofcols]").val(numberofrows);
+					
+					if (numberofrows < maxscmcoptions) { // if I have more but want less..
+					//alert(numberofrows);
+						// hide all the maxscmcoptions	- if confirmed
+						for (i = maxscmcoptions; i > numberofrows; i--) { 
+							$(optionboxes+i).hide();
+						}
+						// Show all the numberofrows again					
+						for (i = 1; i <= numberofrows; i++) {
+							$(optionboxes+i).show();
+						}
+					
+					} else { // if I have less but want more..
+						for (i = 1; i <= maxscmcoptions; i++) {
+							$(optionboxes+i).show();
+						}						
+					}
+				}
+				
 			};
 
 			// initialise the script and do magic :-)

@@ -359,6 +359,12 @@ class qtype_scmc_edit_form extends question_edit_form {
 
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);
+		
+		// keep state of number of options to warn user if they go lower
+        $mform->addElement('hidden', 'qtype_scmc_lastnumberofcols');
+        $mform->setType('qtype_scmc_lastnumberofcols', PARAM_INT);
+		$mform->setDefault('qtype_scmc_lastnumberofcols', $this->numberofrows);
+		
         $mform->addElement('hidden', 'makecopy');
         $mform->setType('makecopy', PARAM_ALPHA);
 

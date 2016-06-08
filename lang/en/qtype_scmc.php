@@ -74,3 +74,4 @@ $string['numberofcolumns'] = 'One or multiple answers?';
 $string['numberofrows'] = 'Number of options';
 $string['numberofcolumns_help'] = '<strong>One answer only</strong>: use this setting for Single Choice items. One option must be identified as the only correct or best answer ("one best answer").<br /><strong>Multiple answers</strong>: use this setting for Multiple Choice items. All options must be judged individually according to the criteria provided, e.g. true/false ("multiple true-false").';
 $string['numberofrows_help'] = 'Choose how many options you want.  When changing to less options, already filled out options will be deleted.';
+$string['deleterawswarning'] = 'Lowering the number of options will delete the last {$a} row(s). Are you sure you want to procceed?';
