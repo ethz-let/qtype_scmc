@@ -54,7 +54,7 @@ class qtype_scmc_grading_scmconezero extends qtype_scmc_grading {
         // i.e. points = if (correct_responses == num_options) then max_points else 0.
 		// If single choice, either 0 or 1
 		if ($question->numberofcolumns < 2) {			
-			if ($correctrows == 1) {
+			if ($correctrows >= 1) {
 				return 1;
 			} else {
 				return 0;

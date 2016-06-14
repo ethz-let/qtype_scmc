@@ -44,17 +44,17 @@
 					$(scmcradionegative).hide(); // Hide second radio (FALSE)
 					$(scmcradionegative).parent().hide(); // Hide the label of radios
 					if (loadorchanged == 'changed') {
-						$(scmcradionegative).attr('checked', true); // Tick all FALSE radios
+						$(scmcradionegative).prop('checked', true); // Tick all FALSE radios
 						// Tobias: untick all; add the below line
-						$(scmcradiopositive).attr('checked', false); // UN-Tick all TRUE radios
+						$(scmcradiopositive).prop('checked', false); // UN-Tick all TRUE radios
 					}
 					// id_scoringmethod_scmconezero
 					// Hide scoring methods.
-					$('#id_scoringmethod_subpoints').attr('checked', false); // ALWAYS subpoints
+					$('#id_scoringmethod_subpoints').prop('checked', false); // Untick subpoints  LMDL-131
 					$('#id_scoringmethod_subpoints').hide(); // Do not allow change
 					$('#id_scoringmethod_subpoints').parent().hide(); // Do not allow change
 					
-					$('#id_scoringmethod_scmconezero').attr('checked', true); // ALWAYS subpoints
+					$('#id_scoringmethod_scmconezero').prop('checked', true); // ALWAYS scmconezero
 					$('#id_scoringmethod_scmconezero').hide(); // Do not allow change
 					$('#id_scoringmethod_scmconezero').parent().hide(); // Do not allow change
 					
@@ -65,6 +65,7 @@
 					$(scmcradionegative).parent().show(); // Show the label of radio button
 					$('#id_scoringmethod_subpoints').show();
 					$('#id_scoringmethod_subpoints').parent().show();
+					$('#id_scoringmethod_subpoints').prop('checked', true); // Tick subpoints LMDL-130
 					$('#id_scoringmethod_scmconezero').show();
 					$('#id_scoringmethod_scmconezero').parent().show();
 				}
