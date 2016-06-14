@@ -83,6 +83,10 @@ class qtype_scmc_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $displayoptions) {
 		global $CFG;
+		$scmcconfig = get_config('qtype_scmc');
+		if (!$scmcconfig->only_single_feedback && $scmcconfig->only_single_feedback != 0) {
+			$scmcconfig->only_single_feedback = 1;
+		}
         $question = $qa->get_question();
         $response = $question->get_response($qa);
 		
@@ -158,11 +162,19 @@ class qtype_scmc_renderer extends qtype_renderer {
 				}
                 $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol, $datamulti, $singleormulti, $qtype_scmc_id);
                 // Show correctness icon with radio button if needed.
-                if ($displayoptions->correctness /*&& count($question->columns) > 1*/) {
-                    $weight = $question->weight($row->number, $column->number);
-                    $radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
-                             '</span>';
-                }
+				if (count($question->columns) > 1 || $scmcconfig->only_single_feedback == 0) {
+					if ($displayoptions->correctness) {
+						$weight = $question->weight($row->number, $column->number);
+						$radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
+								 '</span>';
+					}					
+				} else {
+					if ($displayoptions->correctness && $ischecked == true) {
+						$weight = $question->weight($row->number, $column->number);
+						$radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
+								 '</span>';	
+					}								 
+				}
                 $cell = new html_table_cell($radio);
                 $cell->attributes['class'] = 'scmcresponsebutton';
                 $rowdata[] = $cell;
@@ -181,40 +193,64 @@ class qtype_scmc_renderer extends qtype_renderer {
             $isselected = $question->is_answered($response, $key);
             // For correctness we have to grade the option...
             if ($displayoptions->correctness) {
-				//if (count($question->columns) > 1) {
+				if (count($question->columns) > 1  || $scmcconfig->only_single_feedback == 0) {
 					$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
 					$cell = new html_table_cell($this->feedback_image($rowgrade));
 					$cell->attributes['class'] = 'scmccorrectness';
 					$rowdata[] = $cell;
-				/*} else {
-					if ($isselected) {
+				} else {
+					if ($ischecked == true) {
 						$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
 						$cell = new html_table_cell($this->feedback_image($rowgrade));
 						$cell->attributes['class'] = 'scmccorrectness';
-						$rowdata[] = $cell;
+						$rowdata[] = $cell;	
 					} else {
+						$rowgrade = '';
 						$cell = new html_table_cell('');
 						$cell->attributes['class'] = 'scmccorrectness';
-						$rowdata[] = $cell;
-					}
-				}*/
+						$rowdata[] = $cell;							
+					}						
+				}
             }
-
-            // Add the feedback to the table, if it is visible.
-            if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
-                     $isselected && trim($row->optionfeedback)) {
-                $cell = new html_table_cell(
-                        html_writer::tag('div',
-                                $question->make_html_inline(
-                                        $question->format_text($row->optionfeedback,
-                                                $row->optionfeedbackformat, $qa, 'qtype_scmc',
-                                                'feedbacktext', $rowid)),
-                                array('class' => 'scmcspecificfeedback')));
-								
-                $rowdata[] = $cell;
-            } else {
-				 $cell = new html_table_cell( html_writer::tag('div', ''));
-				 $rowdata[] = $cell;
+			if (count($question->columns) > 1  || $scmcconfig->only_single_feedback == 0) {
+				// Add the feedback to the table, if it is visible.
+				if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
+						 $isselected && trim($row->optionfeedback)) {
+					$cell = new html_table_cell(
+							html_writer::tag('div',
+									$question->make_html_inline(
+											$question->format_text($row->optionfeedback,
+													$row->optionfeedbackformat, $qa, 'qtype_scmc',
+													'feedbacktext', $rowid)),
+									array('class' => 'scmcspecificfeedback')));
+									
+					$rowdata[] = $cell;
+				} else {
+					 $cell = new html_table_cell( html_writer::tag('div', ''));
+					 $rowdata[] = $cell;
+				}
+			} else { // Single Choice
+				// Add the feedback to the table, if it is visible.
+				if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
+						 $isselected && trim($row->optionfeedback)) {
+					if ($ischecked == true) {
+						$feedback_str = $question->format_text($row->optionfeedback,
+													$row->optionfeedbackformat, $qa, 'qtype_scmc',
+													'feedbacktext', $rowid);
+					} else {
+						$feedback_str = '';
+					}						
+					$cell = new html_table_cell(
+							html_writer::tag('div',
+									$question->make_html_inline(
+											$feedback_str),
+									array('class' => 'scmcspecificfeedback')));
+									
+					$rowdata[] = $cell;
+				} else {
+					 $cell = new html_table_cell( html_writer::tag('div', ''));
+					 $rowdata[] = $cell;
+				}						 
 			}
             $table->data[] = $rowdata;
         }

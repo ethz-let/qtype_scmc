@@ -76,3 +76,5 @@ $string['numberofrows'] = 'Anzahl Wahlantworten';
 $string['numberofcolumns_help'] = '<strong>Nur eine Antwort erlauben</strong>: Verwenden Sie diese Einstellung für Einfachwahlaufgaben. Eine Option muss als die einzig richtige oder beste Antwort identifiziert werden ("eine beste Antwort").<br /><br /><strong>Mehrere Antworten</strong>: Verwenden Sie diese Einstellung für Mehrfachwahlaufgaben. Jede Option muss anhand der gesetzten Kriterien, z.B. wahr/falsch eingeschätzt werden ("mehrfach wahr/falsch").';
 $string['numberofrows_help'] = 'Wählen Sie wie viele Wahlantworten Sie einfügen möchten. Wenn Sie auf eine kleinere Anzahl Wahlantworten wechseln, werden bereits ausgefüllte Wahlantworten gelöscht.';
 $string['deleterawswarning'] = 'Lowering the number of options will delete the last {$a} row(s). Are you sure you want to procceed?';
+$string['onlysinglefeedback'] = 'Display Feedback only on selected option';
+$string['onlysinglefeedbackhelp'] = 'Display Feedback only on selected option. This option applies only on Single Choice Type. If disabled, feedback will be displayed on all options';

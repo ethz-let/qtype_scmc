@@ -26,4 +26,4 @@ $plugin->version = 2016061400;
 $plugin->requires = 2013111904; // Moodle >=2.6.4.
 
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.8 for Moodle 2.6+';
+$plugin->release = '2.0 for Moodle 2.6+';

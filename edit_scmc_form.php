@@ -153,23 +153,6 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->addElement('tags', 'tags', get_string('tags'));
         }
         */
-		global $PAGE;
-        $buttonarray = array();
-        $buttonarray[] = $mform->createElement('submit', 'updatebutton',
-                              get_string('savechangesandcontinueediting', 'question'));
-        if ($this->can_preview()) {
-             $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
-                     $this->question->id, $this->context, true);
-              $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
-        }
-  
-        $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('updatebuttonar');
- 
-        if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
-                 $this->question->formoptions->cansaveasnew))) {
-              $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
-        }
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
                     get_string('createdmodifiedheader', 'question'));
@@ -194,6 +177,25 @@ class qtype_scmc_edit_form extends question_edit_form {
                 get_string('byandon', 'question', $a));
             }
         }
+		
+		global $PAGE;
+        $buttonarray = array();
+        $buttonarray[] = $mform->createElement('submit', 'updatebutton',
+                              get_string('savechangesandcontinueediting', 'question'));
+        if ($this->can_preview()) {
+             $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
+                     $this->question->id, $this->context, true);
+              $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
+        }
+  
+        $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('updatebuttonar');
+ 
+        if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
+                 $this->question->formoptions->cansaveasnew))) {
+              $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
+        }
+		
         $this->add_hidden_fields();
         $this->add_action_buttons();
     }

@@ -42,4 +42,13 @@ if ($ADMIN->fulltree) {
             new admin_setting_configcheckbox('qtype_scmc/shuffleoptions',
                     get_string('shuffleoptions', 'qtype_scmc'),
                     get_string('shuffleoptions_help', 'qtype_scmc'), 1));
+    // Display full feedback for single choice or only selection feedback.
+	$options = array(
+        '1' => get_string('yes'),
+        '0' => get_string('no')
+    );
+    $settings->add(
+            new admin_setting_configselect('qtype_scmc/only_single_feedback',
+                    get_string('onlysinglefeedback', 'qtype_scmc'),
+                    get_string('onlysinglefeedbackhelp', 'qtype_scmc'), 1, $options));	
 }
