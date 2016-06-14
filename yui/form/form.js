@@ -68,12 +68,14 @@
 					$('#id_scoringmethod_subpoints').prop('checked', true); // Tick subpoints LMDL-130
 					$('#id_scoringmethod_scmconezero').show();
 					$('#id_scoringmethod_scmconezero').parent().show();
+					// LMDL-134 tick all true! Aaaah
+					$(scmcradiopositive).prop('checked', true); // UN-Tick all TRUE radios
 				}
 				
 				// If changed by human, then tick first TRUE
 				if (loadorchanged == 'changed') {
 					$('#id_weightbutton_1_1').prop('checked', true);
-				}				
+				}			
 			};
 			scmcnumberchanged = function(numberofrows, loadorchanged){
 				numberofrows = parseInt(numberofrows);
