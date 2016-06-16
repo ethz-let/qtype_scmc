@@ -47,6 +47,8 @@
 						$(scmcradionegative).prop('checked', true); // Tick all FALSE radios
 						// Tobias: untick all; add the below line
 						$(scmcradiopositive).prop('checked', false); // UN-Tick all TRUE radios
+						// Tick first TRUE
+						$('#id_weightbutton_1_1').prop('checked', true);
 					}
 					// id_scoringmethod_scmconezero
 					// Hide scoring methods.
@@ -65,20 +67,23 @@
 					$(scmcradionegative).parent().show(); // Show the label of radio button
 					$('#id_scoringmethod_subpoints').show();
 					$('#id_scoringmethod_subpoints').parent().show();
-					// If changed by human, then Tick subpoints LMDL-130
-					if (loadorchanged == 'changed') {
-						$('#id_scoringmethod_subpoints').prop('checked', true); 
-					}
 					$('#id_scoringmethod_scmconezero').show();
 					$('#id_scoringmethod_scmconezero').parent().show();
-					// LMDL-134 tick all true! Aaaah
-					$(scmcradiopositive).prop('checked', true); // UN-Tick all TRUE radios
+					
+					if (loadorchanged == 'changed') {
+						// If changed by human, then Tick subpoints LMDL-130
+						$('#id_scoringmethod_subpoints').prop('checked', true); 
+						// If changed by human, then LMDL-134 tick all true! Aaaah
+						$(scmcradiopositive).prop('checked', true); // Tick all TRUE radios
+					}
+					
 				}
-				
+				/*
 				// If changed by human, then tick first TRUE
 				if (loadorchanged == 'changed') {
 					$('#id_weightbutton_1_1').prop('checked', true);
-				}			
+				}
+				*/				
 			};
 			scmcnumberchanged = function(numberofrows, loadorchanged){
 				numberofrows = parseInt(numberofrows);
