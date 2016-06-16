@@ -65,7 +65,10 @@
 					$(scmcradionegative).parent().show(); // Show the label of radio button
 					$('#id_scoringmethod_subpoints').show();
 					$('#id_scoringmethod_subpoints').parent().show();
-					$('#id_scoringmethod_subpoints').prop('checked', true); // Tick subpoints LMDL-130
+					// If changed by human, then Tick subpoints LMDL-130
+					if (loadorchanged == 'changed') {
+						$('#id_scoringmethod_subpoints').prop('checked', true); 
+					}
 					$('#id_scoringmethod_scmconezero').show();
 					$('#id_scoringmethod_scmconezero').parent().show();
 					// LMDL-134 tick all true! Aaaah
