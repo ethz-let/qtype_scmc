@@ -28,6 +28,9 @@ $categoryid = optional_param('categoryid', 0, PARAM_INT);
 $all = optional_param('all', 0, PARAM_INT);
 $dryrun = optional_param('dryrun', 0, PARAM_INT);
 
+@set_time_limit ( 0 );
+@ini_set('memory_limit','3072M'); // Whooping 3GB due to huge number of questions text size
+
 require_login();
 
 if (!is_siteadmin()) {
@@ -149,7 +152,7 @@ foreach ($questions as $question) {
 		 $columns[$i] = $colns;
 	}
     if ($dryrun) {
-        echo '--------------------------------------------------------------------------------' .
+        echo "<br/>\n".'--------------------------------------------------------------------------------' .
                  "<br/>\n";
         if (count($rows) <= 1) {
             echo 'Question: "' . $question->name . '" with ID ' . $question->id .
@@ -160,13 +163,13 @@ foreach ($questions as $question) {
                      " would NOT migrated! It has the wrong number of responses!<br/>\n";
             $notmigrated[] = $question;
         } else {
-            echo 'Question: "' . $question->name . '" with ID ' . $question->id .
-                     " would be migrated!<br/>\n";
+            echo $question->id.': "' . $question->name . '" with ID ' ."<a href='$CFG->wwwroot/question/preview.php?id=$question->id' target='_blank'>". $question->id .
+                     "</a> would be migrated!<br/>\n";
         }
-        echo shorten_text($question->questiontext, 100, false, '...');
+       // echo shorten_text($question->questiontext, 100, false, '...');
         continue;
     } else {
-        echo '--------------------------------------------------------------------------------' .
+        echo "<br/>\n".'--------------------------------------------------------------------------------' .
                  "<br/>\n";
         echo 'Multichoice Question: "' . $question->name . "\"<br/>\n";
     }
@@ -277,13 +280,18 @@ $used = $endtime - $starttime;
 $mins = round($used / 60);
 $used = ($used - ($mins * 60));
 
-echo "<br/>\n Done\n<br/>";
-echo 'Time needed: ' . $mins . ' mins and ' . $used . " secs.<br/>\n<br/>\n";
+echo "<br/>\n ******** SCRIPT DONE - ";
+echo ' Time needed: ' . $mins . ' mins and ' . $used . " secs. ********<br/>\n<br/>\n";
 
-echo "Questions that were not migrated:<br/>\n";
-echo " ID &nbsp;&nbsp; ,  Question Name<br/>\n";
-echo "----------------------------------------<br/>\n";
-foreach ($notmigrated as $question) {
-    echo $question->id . ' , ' . $question->name . "<br/>\n";
+echo " ******** Questions that were NOT migrated: ";
+if (count($notmigrated) > 0) {
+	echo "<br/>\n ID | Link | Question Name<br/>\n";
+	echo "----------------------------------------<br/>\n<font color='red'>";
+	foreach ($notmigrated as $question) {
+		echo "$question->id | <a href='$CFG->wwwroot/question/preview.php?id=$question->id' target='_blank'>".$question->id . '</a> | ' . $question->name . "<br/>\n";
+	}
+	echo "</font>";
+} else {
+	echo "NONE. All can be migrated with no problems. ********";
 }
 die();
