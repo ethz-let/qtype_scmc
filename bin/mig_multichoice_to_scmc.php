@@ -58,9 +58,17 @@ $sql = "SELECT q.*
 $params = array();
 
 if (!$all && (!($courseid > 0 || $categoryid > 0))) {
-    echo "<br/><font color='red'>You should specify either the 'courseid'
-    or the 'categoryid' parameter! Or set the parameter 'all' to 1.</font><br/>\n";
-    echo "I'm not doing anything without restrictions!\n";
+    echo "<br /><center><h1><font color='red'>You should specify either the '<font color='black'>courseid</font>'
+    or the '<font color='black'>categoryid</font>' parameter Or set the parameter '<font color='black'>all</font>' to 1. Please set '<font color='black'>dryrun</font>' parameter to 1 in order to simulate the migration before committing to the database. No migration will be done without restrictions!</font>
+	</center>
+	<br /><br />Examples:
+	<ul>
+	<li><strong>Specific Course</strong>: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?<font color='blue'>courseid=55</font>
+	<li><strong>Specific Question Category</strong>: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?<font color='blue'>categoryid=1</font>
+	<li><strong>All Multi question</strong>: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?<font color='blue'>all=1</font>
+	<li><strong><font color=red>IMPORTANT & STRONGLY RECOMMENDED</font></strong>: Dry run (no changes made to database - only simulating what will happen) can be done before migrating by using any of the above URLs and adding <strong>&dryrun=1</strong> to the end of the URL. Example: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?all=1<font color='red'>&dryrun=1</font>
+	</ul>
+	</h1><br/>\n";
     die();
 }
 
@@ -140,11 +148,6 @@ foreach ($questions as $question) {
 		 $colns->id = $i;
 		 $columns[$i] = $colns;
 	}
-/*	
-    $columns = $DB->get_records('qtype_multichoice_cols',
-    array('multichoiceid' => $multichoice->id
-    ), ' id ASC ');
-*/
     if ($dryrun) {
         echo '--------------------------------------------------------------------------------' .
                  "<br/>\n";
@@ -182,8 +185,11 @@ foreach ($questions as $question) {
 
     // Create a new scmc question in the same category.
     unset($question->id);
+	$question_name = substr($question->name . ' (SCMC '.date("Y-m-d H:i:s").')',0,255);
+	// Original Question Name plus SCMC limited by 255 chars
+	//$question_name = substr($question->name . ' (SCMC)',0,255);
     $question->qtype = 'scmc';
-    $question->name = $question->name . ' (SCMC)';
+    $question->name = $question_name;
     $question->timecreated = time();
     $question->timemodified = time();
     $question->modifiedby = $USER->id;

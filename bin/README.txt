@@ -23,18 +23,15 @@ Das Skript akzeptiert folgende Parameter in der URL:
 Ein Aufruf geschieht dann in einem Browser z.B. wiefolgt:
    <URL zum Moodle>/question/type/scmc/bin/mig_multichoice_to_scmc.php?courseid=12345&dryrun=1
 oder 
-   <URL zum Moodle>/question/type/scmc/bin/mig_multichoice_to_scmc.php?categoryid=56789&dryrun=1 
+   <URL zum Moodle>/question/type/scmc/bin/mig_multichoice_to_scmc.php?categoryid=56789&dryrun=1
+   
+** ENGLISH **
+You should specify either the 'courseid' or the 'categoryid' parameter! Or set the parameter 'all' to 1. No migration will be done without restrictions!
 
-Sobald dryrun nicht angegeben wird (oder auf 0 gesetzt wird), wird die
-Migration durchgeführt. Da keine Fragen gelöscht werden, kann die
-Migration beliebig oft wiederholt werden. Es werden dann immer wieder
-neue scmc Fragen hinzugefügt.
 
-Die Bewertungsmethoden werden wiefolgt migriert:
-
-    multichoice Methode       scmc Methode
-       'all'         =>   'subpoints'
-       'kany'        =>   'scmc'
-       'scmc'      =>   'scmconezero'
-
- default :  'scmc'
+Examples:
+	
+    Specific Course: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?courseid=55
+    Specific Question Category: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?categoryid=1
+    All Multi question: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?all=1
+	DRY RUN: MOODLE_URL/question/type/scmc/bin/mig_multichoice_to_scmc.php?all=1&dryrun=1
