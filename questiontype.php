@@ -358,13 +358,46 @@ class qtype_scmc extends question_type {
      */
     public function get_random_guess_score($questiondata) {
         $scoring = $questiondata->options->scoringmethod;
-        if ($scoring == 'scmconezero') {
-            return 0.0625;
-        } else if ($scoring == 'subpoints') {
-            return 0.5;
-        } else {
-            return 0.00;
-        }
+		$questionoptioncount = $questiondata->options->numberofcolumns;
+		$totalfraction = 0;
+		$countpositiveweights = 0;
+		$question = $this->make_question($questiondata);
+        $weights = $question->weights;
+		foreach ($question->rows as $rowid => $row) {
+			foreach ($question->columns as $columnid => $column) {
+					$weight = $weights[$row->number][$column->number]->weight;
+					$totalfraction += $weight;		
+					if ($weight > 0){
+						$countpositiveweights ++;
+					}
+			}
+		}
+		if ($questionoptioncount > 1) {			
+			if ($scoring == 'scmconezero') {
+				
+				if (count($question->rows) == $countpositiveweights) {
+					return 1;
+				} else {
+					return 0;
+				}
+			} else if ($scoring == 'subpoints') {
+				return 1.0 * $totalfraction / count($questiondata->options->rows);
+			} else {
+				return 0.00;
+			}			
+		/*			
+			if ($scoring == 'scmconezero') {
+				return 0.0625; // each 25%
+			} else if ($scoring == 'subpoints') {
+				return 0.5;
+			} else {
+				return 0.00;
+			}
+		*/			
+		} else {
+			// Single choice questions - average choice fraction.
+			return $totalfraction / count($questiondata->options->rows);
+		}
     }
 
     /**
@@ -373,6 +406,9 @@ class qtype_scmc extends question_type {
      * @see question_type::get_possible_responses()
      */
     public function get_possible_responses($questiondata) {
+		
+		$questionoptioncount = $questiondata->options->numberofcolumns;
+		
         $question = $this->make_question($questiondata);
         $weights = $question->weights;
         $parts = array();
@@ -385,10 +421,13 @@ class qtype_scmc extends question_type {
                 } else {
                     $partialcredit = -0.999; // Due to non-linear math.
                 }
-                if ($question->scoringmethod == 'subpoints' &&
+                if (($question->scoringmethod == 'subpoints') &&
                          $weights[$row->number][$column->number]->weight > 0) {
                     $partialcredit = 1 / count($question->rows);
-                }
+                }			
+				if ($questionoptioncount == 1) {
+					$partialcredit = 1; // Always 100% for single choice
+				}
                 $correctreponse = '';
                 if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
                                                                            // Response?
