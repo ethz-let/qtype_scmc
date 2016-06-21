@@ -374,12 +374,7 @@ class qtype_scmc extends question_type {
 		}
 		if ($questionoptioncount > 1) {			
 			if ($scoring == 'scmconezero') {
-				
-				if (count($question->rows) == $countpositiveweights) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return 1.0 / 2 ^ count($question->rows);
 			} else if ($scoring == 'subpoints') {
 				return 1.0 * $totalfraction / count($questiondata->options->rows);
 			} else {
