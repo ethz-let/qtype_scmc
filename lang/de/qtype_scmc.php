@@ -77,4 +77,4 @@ $string['numberofcolumns_help'] = '<strong>Nur eine Antwort erlauben (empfohlen)
 $string['numberofrows_help'] = 'Wählen Sie die Anzahl Wahlantworten. Wenn Sie auf eine kleinere Anzahl Wahlantworten wechseln, werden überzählige Wahlantworten gelöscht, sobald die Frage gespeichert wird.';
 $string['deleterawswarning'] = 'Wenn Sie auf eine kleinere Anzahl Wahlantworten wechseln, werden die letzten {$a} Wahlantwort(en) gelöscht. Möchten Sie fortfahren?';
 $string['onlysinglefeedback'] = 'Feedback nur bei ausgewählten Wahlantworten anzeigen.';
-$string['onlysinglefeedbackhelp'] = 'Feedback nur bei ausgewählten Wahlantworten anzeigen. Diese Konfiguration hat nur auf den Single Choice Typ Auswirkungen. Falls nicht ausgewählt werden die Feedbacks für alle Wahlantworten  angezeigt.';
+$string['onlysinglefeedbackhelp'] = 'Feedback nur bei ausgewählten Wahlantworten anzeigen. Diese Konfiguration hat nur auf den Single Choice Typ Auswirkungen. Falls nicht ausgewählt werden die Feedbacks für alle Wahlantworten angezeigt.';

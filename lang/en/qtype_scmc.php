@@ -76,4 +76,4 @@ $string['numberofcolumns_help'] = '<strong>One answer only</strong> (recommended
 $string['numberofrows_help'] = 'Specify the number of options.  When changing to fewer options, surplus options will be deleted once the item is saved.';
 $string['deleterawswarning'] = 'Lowering the number of options will delete the last {$a} option(s). Are you sure you want to proceed?';
 $string['onlysinglefeedback'] = 'Display Feedback only on selected option';
-$string['onlysinglefeedbackhelp'] = 'Display Feedback only on selected option. This configuration applies only on Single Choice Type. If disabled, feedback will be displayed on all options.';
+$string['onlysinglefeedbackhelp'] = 'Display Feedback only on selected option. This configuration applies only on Single Choice Type. If disabled, feedback will be displayed on all options. ';
