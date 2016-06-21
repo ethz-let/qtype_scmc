@@ -373,16 +373,16 @@ class qtype_scmc extends question_type {
 			}
 		}
 		if ($questionoptioncount > 1) {			
-			if ($scoring == 'scmconezero') {
-				return 1.0 / 2 ^ count($question->rows);
+			if ($scoring == 'scmconezero') { 
+				return 1.0 / (pow(2,count($question->rows)));
 			} else if ($scoring == 'subpoints') {
-				return 1.0 * $totalfraction / count($questiondata->options->rows);
+				return 1.0 / count($questiondata->options->rows);
 			} else {
 				return 0.00;
 			}		
 		} else {
 			// Single choice questions - average choice fraction.
-			return $totalfraction / count($questiondata->options->rows);
+			return 1.0 / count($questiondata->options->rows);
 		}
     }
 
@@ -398,39 +398,66 @@ class qtype_scmc extends question_type {
         $question = $this->make_question($questiondata);
         $weights = $question->weights;
         $parts = array();
-        foreach ($question->rows as $rowid => $row) {
-            $choices = array();
-            foreach ($question->columns as $columnid => $column) {
-                // Calculate the partial credit.
-                if ($question->scoringmethod == 'subpoints') {
-                    $partialcredit = 0.0;
-                } else {
-                    $partialcredit = -0.999; // Due to non-linear math.
-                }
-                if (($question->scoringmethod == 'subpoints') &&
-                         $weights[$row->number][$column->number]->weight > 0) {
-                    $partialcredit = 1 / count($question->rows);
-                }			
-				if ($questionoptioncount == 1) {
-					$partialcredit = 1; // Always 100% for single choice
+		if ($questionoptioncount > 1) {
+			foreach ($question->rows as $rowid => $row) {
+				$choices = array();
+				foreach ($question->columns as $columnid => $column) {
+					// Calculate the partial credit.
+					if ($question->scoringmethod == 'subpoints') {
+						$partialcredit = 0.0;
+					} else {
+						$partialcredit = -0.999; // Due to non-linear math.
+					}
+					if (($question->scoringmethod == 'subpoints') &&
+							 $weights[$row->number][$column->number]->weight > 0) {
+						$partialcredit = 1 / count($question->rows);
+					}			
+					if ($questionoptioncount == 1) {
+						$partialcredit = 1; // Always 100% for single choice
+					}
+					$correctreponse = '';
+					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
+																			   // Response?
+						$correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
+					}
+					$choices[$columnid] = new question_possible_response(
+							question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
+									 ': ' . question_utils::to_plain_text(
+											$column->responsetext . $correctreponse,
+											$column->responsetextformat), $partialcredit);
+				}			
+				$choices[null] = question_possible_response::no_response();	
+
+				$parts[$rowid] = $choices;
+			}
+			return $parts;
+		} else {
+			foreach ($question->rows as $rowid => $row) {
+				$choices = array();
+				$partialcredit = 0;
+				foreach ($question->columns as $columnid => $column) {
+					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
+																			   // Response?
+						$correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
+						$partialcredit = 1;
+					} else {
+						$correctreponse = '';
+						$partialcredit = 0;
+					}
+					$choices[$columnid] = new question_possible_response(
+						question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
+								 ': ' . question_utils::to_plain_text(
+										$column->responsetext . $correctreponse,
+										$column->responsetextformat), $partialcredit);
+					
 				}
-                $correctreponse = '';
-                if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
-                                                                           // Response?
-                    $correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
-                }
-                $choices[$columnid] = new question_possible_response(
-                        question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
-                                 ': ' . question_utils::to_plain_text(
-                                        $column->responsetext . $correctreponse,
-                                        $column->responsetextformat), $partialcredit);
-            }
-            $choices[null] = question_possible_response::no_response();
+				$choices[null] = question_possible_response::no_response();
+				$parts[$rowid] = $choices;	
+			}
 
-            $parts[$rowid] = $choices;
-        }
+			  return $parts;
+		}
 
-        return $parts;
     }
 
     /**
