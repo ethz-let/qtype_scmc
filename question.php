@@ -268,17 +268,24 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
                     break;
                 }
             }
+			if (empty($column)) {
+                $parts[$rowid] = question_classified_response::no_response();
+                continue;
+            }
             // Calculate the partial credit.
             if ($this->scoringmethod == 'subpoints') {
                 $partialcredit = 0.0;
             } else {
-                $partialcredit = -999; // Due to non-linear math.
+                $partialcredit = -0.999; // Due to non-linear math.
             }
             if ($this->scoringmethod == 'subpoints' &&
                      $this->weights[$row->number][$column->number]->weight > 0) {
                 $partialcredit = 1 / count($this->rows);
             }
-
+			if (count($this->columns) == 1) {
+					$partialcredit = 1; // Always 100% for single choice
+			}
+			
             $parts[$rowid] = new question_classified_response($column->id, $column->responsetext,
                     $partialcredit);
         }

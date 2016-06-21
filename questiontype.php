@@ -384,16 +384,7 @@ class qtype_scmc extends question_type {
 				return 1.0 * $totalfraction / count($questiondata->options->rows);
 			} else {
 				return 0.00;
-			}			
-		/*			
-			if ($scoring == 'scmconezero') {
-				return 0.0625; // each 25%
-			} else if ($scoring == 'subpoints') {
-				return 0.5;
-			} else {
-				return 0.00;
-			}
-		*/			
+			}		
 		} else {
 			// Single choice questions - average choice fraction.
 			return $totalfraction / count($questiondata->options->rows);
