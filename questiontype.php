@@ -376,7 +376,7 @@ class qtype_scmc extends question_type {
 			if ($scoring == 'scmconezero') { 
 				return 1.0 / (pow(2,count($question->rows)));
 			} else if ($scoring == 'subpoints') {
-				return 1.0 / count($questiondata->options->rows);
+				return 0.5; //1.0 / count($questiondata->options->rows);
 			} else {
 				return 0.00;
 			}		
