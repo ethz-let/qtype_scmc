@@ -286,11 +286,15 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
 					$partialcredit = 1; // Always 100% for single choice
 			}
 			
-            $parts[$rowid] = new question_classified_response($column->id, $column->responsetext,
-                    $partialcredit);
+			$parts[$rowid] = new question_classified_response($column->id, $column->responsetext, $partialcredit);
+            
         }
-
-        return $parts;
+		if (count($this->columns) == 1) {
+			return array($this->id => $parts);
+		} else {
+			 return $parts;
+		}
+       
     }
 
     /**

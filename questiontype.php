@@ -374,7 +374,7 @@ class qtype_scmc extends question_type {
 		}
 		if ($questionoptioncount > 1) {			
 			if ($scoring == 'scmconezero') { 
-				return 1.0 / (pow(2,count($question->rows)));
+				return pow(0.5,count($question->rows)); //1.0 / (pow(2,count($question->rows)));
 			} else if ($scoring == 'subpoints') {
 				return 0.5; //1.0 / count($questiondata->options->rows);
 			} else {
@@ -432,8 +432,29 @@ class qtype_scmc extends question_type {
 			}
 			return $parts;
 		} else {
+		    $responses = array();
+            foreach ($question->rows as $rowid => $row) {
+				
+				foreach ($question->columns as $columnid => $column) {
+					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
+																			   // Response?
+						$correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
+						$partialcredit = 1;
+					} else {
+						$correctreponse = '';
+						$partialcredit = 0;
+					}
+				}
+					
+                $responses[$rowid] = new question_possible_response(
+						question_utils::to_plain_text($row->optiontext, $row->optiontextformat), $partialcredit);
+            }
+
+            $responses[null] = question_possible_response::no_response();
+            return array($question->id => $responses);
+			
 			foreach ($question->rows as $rowid => $row) {
-				$choices = array();
+				//$choices = array();
 				$partialcredit = 0;
 				foreach ($question->columns as $columnid => $column) {
 					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
@@ -444,17 +465,23 @@ class qtype_scmc extends question_type {
 						$correctreponse = '';
 						$partialcredit = 0;
 					}
-					$choices[$columnid] = new question_possible_response(
+					//[$columnid]
+					$choices = new question_possible_response(
 						question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
 								 ': ' . question_utils::to_plain_text(
 										$column->responsetext . $correctreponse,
 										$column->responsetextformat), $partialcredit);
 					
 				}
+				
 				$choices[null] = question_possible_response::no_response();
-				$parts[$rowid] = $choices;	
-			}
 
+				$parts[$rowid] = $choices;	
+				
+			
+			}
+			
+//return array($questiondata->id => $parts);
 			  return $parts;
 		}
 
