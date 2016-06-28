@@ -241,19 +241,39 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
     public function classify_response(array $response) {
         // See which column numbers have been selected.
         $selectedcolumns = array();
+		$weights = $this->weights;
         foreach ($this->order as $key => $rowid) {
             $field = $this->field($key);
             $row = $this->rows[$rowid];
 
             if (array_key_exists($field, $response) && $response[$field]) {
-                $selectedcolumns[$rowid] = $response[$field];
+                $selectedcolumns[$rowid] = $response[$field];	
             } else {
-                $selectedcolumns[$rowid] = 0;
+				$selectedcolumns[$rowid] = 0;
             }
         }
 
-        // Now calculate the classification.
-        $parts = array();
+		$parts = array();
+		
+		if (count($this->columns) == 1) { // SC
+			$found_response = 0;
+			foreach ($this->rows as $rowid => $row) {
+				foreach ($this->columns as $colid => $col) {
+					$column = $col;
+					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct Response?
+						$correctreponse = '';
+						$partialcredit = 1;
+					} else {
+						$correctreponse = '';
+						$partialcredit = 0;
+					}
+				}
+				$parts = new question_classified_response($rowid, question_utils::to_plain_text($column->responsetext, $column->responsetextformat), $partialcredit);
+				
+			}
+			return array($this->id =>$parts);
+		}
+        // Now calculate the classification for MC.
         foreach ($this->rows as $rowid => $row) {
             $field = $this->field($key);
             if (empty($selectedcolumns[$rowid])) {
@@ -282,18 +302,11 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
                      $this->weights[$row->number][$column->number]->weight > 0) {
                 $partialcredit = 1 / count($this->rows);
             }
-			if (count($this->columns) == 1) {
-					$partialcredit = 1; // Always 100% for single choice
-			}
-			
 			$parts[$rowid] = new question_classified_response($column->id, $column->responsetext, $partialcredit);
             
         }
-		if (count($this->columns) == 1) {
-			return array($this->id => $parts);
-		} else {
-			 return $parts;
-		}
+		
+		return $parts;
        
     }
 

@@ -411,9 +411,6 @@ class qtype_scmc extends question_type {
 					if (($question->scoringmethod == 'subpoints') &&
 							 $weights[$row->number][$column->number]->weight > 0) {
 						$partialcredit = 1 / count($question->rows);
-					}			
-					if ($questionoptioncount == 1) {
-						$partialcredit = 1; // Always 100% for single choice
 					}
 					$correctreponse = '';
 					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
@@ -432,7 +429,7 @@ class qtype_scmc extends question_type {
 			}
 			return $parts;
 		} else {
-		    $responses = array();
+		    $choices = array();
             foreach ($question->rows as $rowid => $row) {
 				
 				foreach ($question->columns as $columnid => $column) {
@@ -445,44 +442,12 @@ class qtype_scmc extends question_type {
 						$partialcredit = 0;
 					}
 				}
-					
-                $responses[$rowid] = new question_possible_response(
-						question_utils::to_plain_text($row->optiontext, $row->optiontextformat), $partialcredit);
+                $choices[$rowid] = new question_possible_response(
+						question_utils::to_plain_text($row->optiontext . $correctreponse, $row->optiontextformat), $partialcredit);
             }
+            $choices[null] = question_possible_response::no_response();
+            return array($questiondata->id => $choices);
 
-            $responses[null] = question_possible_response::no_response();
-            return array($question->id => $responses);
-			
-			foreach ($question->rows as $rowid => $row) {
-				//$choices = array();
-				$partialcredit = 0;
-				foreach ($question->columns as $columnid => $column) {
-					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
-																			   // Response?
-						$correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
-						$partialcredit = 1;
-					} else {
-						$correctreponse = '';
-						$partialcredit = 0;
-					}
-					//[$columnid]
-					$choices = new question_possible_response(
-						question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
-								 ': ' . question_utils::to_plain_text(
-										$column->responsetext . $correctreponse,
-										$column->responsetextformat), $partialcredit);
-					
-				}
-				
-				$choices[null] = question_possible_response::no_response();
-
-				$parts[$rowid] = $choices;	
-				
-			
-			}
-			
-//return array($questiondata->id => $parts);
-			  return $parts;
 		}
 
     }
