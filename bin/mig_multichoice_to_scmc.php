@@ -243,7 +243,7 @@ foreach ($questions as $question) {
             $scmcweight->columnnumber = $scmccolumn->number;
 			//$scmcweight->weight = $row->fraction;
 			
-            if ($row->fraction > 0) {
+            if ($row->fraction == 1) { // Was "> 0" but changed due to LMDL-139 
                 $scmcweight->weight = 1.0;
             } else {
                 $scmcweight->weight = 0.0;
