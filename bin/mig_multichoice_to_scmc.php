@@ -140,7 +140,7 @@ foreach ($questions as $question) {
     $rowids = array_keys($rows);
 	
 	$columns = array();
-	if ($multichoice->single == 0){
+	if ($multichoice->single == 0) {
 		$colmcount = 2;
 	} else {
 		$colmcount = 1;
@@ -151,6 +151,7 @@ foreach ($questions as $question) {
 		 $colns->id = $i;
 		 $columns[$i] = $colns;
 	}
+	$totalnumberofcolumns = count($columns);
     if ($dryrun) {
         echo "<br/>\n".'--------------------------------------------------------------------------------' .
                  "<br/>\n";
@@ -243,11 +244,21 @@ foreach ($questions as $question) {
             $scmcweight->columnnumber = $scmccolumn->number;
 			//$scmcweight->weight = $row->fraction;
 			
-            if ($row->fraction == 1) { // Was "> 0" but changed due to LMDL-139 
-                $scmcweight->weight = 1.0;
-            } else {
-                $scmcweight->weight = 0.0;
-            }
+			if ($totalnumberofcolumns == 1) { // SC
+				// Was "> 0" but changed due to LMDL-139 
+				if ($row->fraction >= 1) {
+					$scmcweight->weight = 1.0;
+				} else {
+					$scmcweight->weight = 0.0;
+				}
+			} else {
+				// LMDL-140
+				if ($row->fraction > 0) {
+					$scmcweight->weight = 1.0;
+				} else {
+					$scmcweight->weight = 0.0;
+				}				
+			}
 			
             $scmcweight->id = $DB->insert_record('qtype_scmc_weights', $scmcweight);
 			
