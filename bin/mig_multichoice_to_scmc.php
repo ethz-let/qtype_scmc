@@ -218,60 +218,119 @@ foreach ($questions as $question) {
 		
 		$colcount = 1;
 		$textcount = 1;
-		foreach ($columns as $column) {		
-		
-			// Create a new scmc column.
+
+		$weightpicked = 0;
+		if ($multichoice->single == 0) { // MC
+			// LMDL-140
+			
+			// Create a new first scmc column.
 			$scmccolumn = new stdClass();
 			$scmccolumn->questionid = $question->id;
-			$scmccolumn->number = $colcount++;
-			if ($textcount == 1) {
-				$scmccolumn->responsetext = 'True';
-			} else {
-				$scmccolumn->responsetext = 'False';
-			}
-			$textcount++;
-			//$scmccolumn->responsetext = $column->shorttext;
+			$scmccolumn->number = 1;
+			$scmccolumn->responsetext = 'True';
 			$scmccolumn->responsetextformat = FORMAT_MOODLE;
 
 			if ( $ignorequestion != $question->id ) {
 				$scmccolumn->id = $DB->insert_record('qtype_scmc_columns', $scmccolumn);				
 			}
+			// Create a new second scmc column.
+			$scmccolumn2 = new stdClass();
+			$scmccolumn2->questionid = $question->id;
+			$scmccolumn2->number = 2;
+			$scmccolumn2->responsetext = 'False';
+			$scmccolumn2->responsetextformat = FORMAT_MOODLE;
 
-			// Create a new weight entry.
-            $scmcweight = new stdClass();
-            $scmcweight->questionid = $question->id;
-            $scmcweight->rownumber = $scmcrow->number;
-            $scmcweight->columnnumber = $scmccolumn->number;
-			//$scmcweight->weight = $row->fraction;
+			if ( $ignorequestion != $question->id ) {
+				$scmccolumn2->id = $DB->insert_record('qtype_scmc_columns', $scmccolumn2);				
+			}
 			
-			if ($totalnumberofcolumns == 1) { // SC
+			// Create a new first weight entry.
+			$scmcweight = new stdClass();
+			$scmcweight->questionid = $question->id;
+			$scmcweight->rownumber = $scmcrow->number;
+			$scmcweight->columnnumber = $scmccolumn->number;
+
+			if ($row->fraction > 0) {
+				$scmcweight->weight = 1.0;
+			} else {
+				$scmcweight->weight = 0.0;
+			}
+			$weightpicked = $scmcweight->weight;
+			$scmcweight->id = $DB->insert_record('qtype_scmc_weights', $scmcweight);
+
+			// echo $scmccolumn->responsetext.": ".$row->fraction." new ".$scmcweight->weight."<br />";
+			
+			// Create a new second weight entry.
+			$scmcweight2 = new stdClass();
+			$scmcweight2->questionid = $question->id;
+			$scmcweight2->rownumber = $scmcrow->number;
+			$scmcweight2->columnnumber = $scmccolumn2->number;
+
+			if ($weightpicked == 1.0) { // new option opposite to first option
+				$scmcweight2->weight = 0.0;
+			} else {
+				$scmcweight2->weight = 1.0;
+			}
+			$scmcweight2->id = $DB->insert_record('qtype_scmc_weights', $scmcweight2);
+
+			// echo $scmccolumn2->responsetext.": ".$row->fraction." new ".$scmcweight2->weight."<br />";
+					
+			
+		} else { // SC		
+			foreach ($columns as $column) {		
+			
+				// Create a new scmc column.
+				$scmccolumn = new stdClass();
+				$scmccolumn->questionid = $question->id;
+				$scmccolumn->number = $colcount++;
+				if ($textcount == 1) {
+					$scmccolumn->responsetext = 'True';
+				} else {
+					$scmccolumn->responsetext = 'False';
+				}
+				$textcount++;
+				//$scmccolumn->responsetext = $column->shorttext;
+				$scmccolumn->responsetextformat = FORMAT_MOODLE;
+
+				if ( $ignorequestion != $question->id ) {
+					$scmccolumn->id = $DB->insert_record('qtype_scmc_columns', $scmccolumn);				
+				}
+
+				// Create a new weight entry.
+				$scmcweight = new stdClass();
+				$scmcweight->questionid = $question->id;
+				$scmcweight->rownumber = $scmcrow->number;
+				$scmcweight->columnnumber = $scmccolumn->number;
+
 				// Was "> 0" but changed due to LMDL-139 
 				if ($row->fraction >= 1) {
 					$scmcweight->weight = 1.0;
 				} else {
 					$scmcweight->weight = 0.0;
 				}
-			} else {
-				// LMDL-140
-				if ($row->fraction > 0) {
-					$scmcweight->weight = 1.0;
-				} else {
-					$scmcweight->weight = 0.0;
-				}				
-			}
-			
-            $scmcweight->id = $DB->insert_record('qtype_scmc_weights', $scmcweight);
-			
-		}
-		$ignorequestion = $question->id;
-	
-    }
+				$scmcweight->id = $DB->insert_record('qtype_scmc_weights', $scmcweight);
 
+			
+			}
+		}
+		
+		$ignorequestion = $question->id;
+	}
     // Create the scmc options.
     $scmc = new stdClass();
     $scmc->questionid = $question->id;
     $scmc->shuffleoptions = $multichoice->shuffleanswers;
-    $scmc->numberofrows = count($rows);
+	/*
+	// Tobias decided not to go for it
+	// LMDL-141 what if more than 5 options selected in MC?
+	// if more than 5, then reset to 5, in db.
+	$mc_total_rows = count($rows);
+	if ($mc_total_rows > 5) {
+		$mc_total_rows = 5;
+	}
+    $scmc->numberofrows = $mc_total_rows;
+	*/
+	$scmc->numberofrows = count($rows);
     $scmc->numberofcolumns = $colmcount;
 	$scmc->answernumbering = $multichoice->answernumbering;
 

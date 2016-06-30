@@ -215,6 +215,11 @@ class qtype_scmc_edit_form extends question_edit_form {
         } else {
             $this->numberofrows = 3;
         }
+		// LMDL-141
+		$lastnumberofrows = $this->numberofrows;
+		if ($this->numberofrows > 5) { // Reset to the max. i.e 5
+			$this->numberofrows = 5;
+		}
         if (isset($this->question->options->columns) && count($this->question->options->columns) > 0) {
             $this->numberofcolumns = count($this->question->options->columns);
         } else {
@@ -246,7 +251,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		$numoptionsdisabled = array();
 		$mform->addElement('select', 'numberofrows',
         get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
-        $mform->setDefault('numberofrows', 3);
+		$mform->setDefault('numberofrows', 3);
         $mform->addHelpButton('numberofrows', 'numberofrows', 'qtype_scmc');
 
 		$mform->addElement('header', 'scoringmethodheader',
@@ -384,7 +389,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 		// keep state of number of options to warn user if they go lower
         $mform->addElement('hidden', 'qtype_scmc_lastnumberofcols');
         $mform->setType('qtype_scmc_lastnumberofcols', PARAM_INT);
-		$mform->setDefault('qtype_scmc_lastnumberofcols', $this->numberofrows);
+		$mform->setDefault('qtype_scmc_lastnumberofcols', $lastnumberofrows);
 		
         $mform->addElement('hidden', 'makecopy');
         $mform->setType('makecopy', PARAM_ALPHA);
@@ -413,6 +418,10 @@ class qtype_scmc_edit_form extends question_edit_form {
             $question->scoringmethod = $question->options->scoringmethod;
             $question->rows = $question->options->rows;
             $question->columns = $question->options->columns;
+			// LMDL-141
+			if ($question->options->numberofrows > 5) { // Reset to the max. i.e 5
+				$question->options->numberofrows = 5;
+			}
             $question->numberofrows = $question->options->numberofrows;
             $question->numberofcolumns = $question->options->numberofcolumns;
         }

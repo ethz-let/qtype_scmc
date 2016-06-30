@@ -78,3 +78,4 @@ $string['numberofrows_help'] = 'Wählen Sie die Anzahl Wahlantworten. Wenn Sie a
 $string['deleterawswarning'] = 'Wenn Sie auf eine kleinere Anzahl Wahlantworten wechseln, werden die letzten {$a} Wahlantwort(en) gelöscht. Möchten Sie fortfahren?';
 $string['onlysinglefeedback'] = 'Feedback nur bei ausgewählten Wahlantworten anzeigen';
 $string['onlysinglefeedbackhelp'] = 'Feedback nur bei ausgewählten Wahlantworten anzeigen. Diese Konfiguration wirkt sich nur auf den Single Choice Typ aus. Falls nicht ausgewählt, wird zu allen Wahlantworten Feedback angzeigt.';
+$string['mustdeleteextrarows'] = 'Der Fragetyp SC/MC erlaubt maximal 5 Wahlantworten.  {$a} Wahlantwort(en) werden gelöscht. Falls Sie abbrechen ohne zu speichern, bleiben die überzähligen Wahlantworten erhalten.';

@@ -29,7 +29,7 @@
 			// For radio one right solution only
 			$('input[data-colscmc="positive"]').on('click', function() {
 				var howmanyanswers = $('#id_numberofcolumns').val();
-				if( howmanyanswers == 1){
+				if( howmanyanswers == 1) {
 					var radioscmcid = $(this).attr('id');
 					$('input[data-colscmc="positive"]').attr('checked', false); // UN-Tick all TRUE radios
 					$('input[data-colscmc="negative"]').attr('checked', true); // Tick all FALSE radios
@@ -78,12 +78,7 @@
 					}
 					
 				}
-				/*
-				// If changed by human, then tick first TRUE
-				if (loadorchanged == 'changed') {
-					$('#id_weightbutton_1_1').prop('checked', true);
-				}
-				*/				
+			
 			};
 			scmcnumberchanged = function(numberofrows, loadorchanged){
 				numberofrows = parseInt(numberofrows);
@@ -92,16 +87,21 @@
 				var optionboxes = '#optionbox_response_';
 				var lasttimerows = $("input[name=qtype_scmc_lastnumberofcols]").val();
 				var remainingscmcoptions = maxscmcoptions - numberofrows;
-
+				
 				if (lasttimerows > numberofrows) {
 					var scmcdiffraws = lasttimerows - numberofrows;
-					 if (confirm(M.util.get_string('deleterawswarning', 'qtype_scmc', scmcdiffraws))) {
+					if (confirm(M.util.get_string('deleterawswarning', 'qtype_scmc', scmcdiffraws))) {
 						 allowedtochangeresult = 1;
-					 } else {
+					} else {
 						allowedtochangeresult = 0;
 						// reset the select box to original number
+						if (lasttimerows > maxscmcoptions) {
+							lasttimerows = maxscmcoptions;
+							alert(M.util.get_string('mustdeleteextrarows', 'qtype_scmc', scmcdiffraws))
+						}
 						$("#id_numberofrows").val(lasttimerows);
-					 }
+					}
+
 				}
 				
 				if (allowedtochangeresult == 1) {				
@@ -109,7 +109,6 @@
 					$("input[name=qtype_scmc_lastnumberofcols]").val(numberofrows);
 					
 					if (numberofrows < maxscmcoptions) { // if I have more but want less..
-					//alert(numberofrows);
 						// hide all the maxscmcoptions	- if confirmed
 						for (i = maxscmcoptions; i > numberofrows; i--) { 
 							$(optionboxes+i).hide();
@@ -148,7 +147,7 @@
 			if (!$('input[data-colscmc="positive"]:checked').val()) {
 				// Tick first TRUE
 				$('#id_weightbutton_1_1').prop('checked', true);
-			}				
+			}		
 
 		
 	});	

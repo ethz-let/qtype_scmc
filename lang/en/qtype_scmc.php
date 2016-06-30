@@ -77,3 +77,4 @@ $string['numberofrows_help'] = 'Specify the number of options.  When changing to
 $string['deleterawswarning'] = 'Lowering the number of options will delete the last {$a} option(s). Are you sure you want to proceed?';
 $string['onlysinglefeedback'] = 'Display feedback only on selected option';
 $string['onlysinglefeedbackhelp'] = 'Display feedback only on selected option. This configuration applies only on Single Choice type. If disabled, feedback will be displayed on all options. ';
+$string['mustdeleteextrarows'] = 'Max allowed options in SC/MC are 5 options. {$a} option(s) will be deleted. If you cancel editing without saving, the surplus options will remain.';
