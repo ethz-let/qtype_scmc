@@ -256,22 +256,31 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
 		$parts = array();
 		
 		if (count($this->columns) == 1) { // SC
-			$found_response = 0;
-			foreach ($this->rows as $rowid => $row) {
-				foreach ($this->columns as $colid => $col) {
-					$column = $col;
-					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct Response?
-						$correctreponse = '';
-						$partialcredit = 1;
-					} else {
-						$correctreponse = '';
-						$partialcredit = 0;
-					}
-				}
-				$parts = new question_classified_response($rowid, question_utils::to_plain_text($column->responsetext, $column->responsetextformat), $partialcredit);
-				
+		
+		$sele = 0;
+		foreach($selectedcolumns as $k=>$v){
+			if ($selectedcolumns[$k] == 1){
+				$sele = $k;
+				break;
 			}
-			return array($this->id =>$parts);
+		}
+		if ($sele == 0) { // Nothing Selected..
+			return array($this->id => question_classified_response::no_response());
+		}
+        $choiceid = $sele;
+        $ans = $this->rows[$choiceid];
+		foreach ($this->columns as $colid => $col) {
+			$column = $col;
+			if ($weights[$row->number][$column->number]->weight > 0) {
+					$correctreponse = '';
+					$partialcredit = 1;
+			} else {
+					$correctreponse = '';
+					$partialcredit = 0;
+			}
+		}		
+        return array($this->id => new question_classified_response($choiceid,
+                $this->html_to_text($column->responsetext, $column->responsetextformat), $partialcredit));
 		}
         // Now calculate the classification for MC.
         foreach ($this->rows as $rowid => $row) {
