@@ -23,8 +23,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_scmc';
-$plugin->version = 2016081600;
+$plugin->version = 2017011900;
 $plugin->requires = 2013111904; // Moodle >=2.6.4.
 
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '4.6 for Moodle 2.6+';
+$plugin->release = '4.7 for Moodle 2.6+';

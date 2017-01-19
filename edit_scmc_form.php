@@ -8,22 +8,23 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ *
  * @package qtype_scmc
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/edit_question_form.php');
-require_once($CFG->dirroot . '/question/type/scmc/lib.php');
-require_once($CFG->dirroot . '/question/engine/bank.php');
+require_once ($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once ($CFG->dirroot . '/question/type/scmc/lib.php');
+require_once ($CFG->dirroot . '/question/engine/bank.php');
 
 
 /**
@@ -75,18 +76,22 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
                     array('contexts' => $contexts
                     ));
-        } else if (!($this->question->formoptions->canmove || $this->question->formoptions->cansaveasnew)) {
+        } else if (!($this->question->formoptions->canmove ||
+                 $this->question->formoptions->cansaveasnew)) {
             // Editing question with no permission to move from category.
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
-            array('contexts' => array($this->categorycontext)));
+                    array('contexts' => array($this->categorycontext
+                    )
+                    ));
             $mform->addElement('hidden', 'usecurrentcat', 1);
             $mform->setType('usecurrentcat', PARAM_BOOL);
             $mform->setConstant('usecurrentcat', 1);
         } else if (isset($this->question->formoptions->movecontext)) {
             // Moving question to another context.
             $mform->addElement('questioncategory', 'categorymoveto',
-            get_string('category', 'question'),
-            array('contexts' => $this->contexts->having_cap('moodle/question:add')));
+                    get_string('category', 'question'),
+                    array('contexts' => $this->contexts->having_cap('moodle/question:add')
+                    ));
             $mform->addElement('hidden', 'usecurrentcat', 1);
             $mform->setType('usecurrentcat', PARAM_BOOL);
             $mform->setConstant('usecurrentcat', 1);
@@ -94,21 +99,26 @@ class qtype_scmc_edit_form extends question_edit_form {
             // Editing question with permission to move from category or save as new q.
             $currentgrp = array();
             $currentgrp[0] = $mform->createElement('questioncategory', 'category',
-            get_string('categorycurrent', 'question'),
-            array('contexts' => array($this->categorycontext)));
+                    get_string('categorycurrent', 'question'),
+                    array('contexts' => array($this->categorycontext
+                    )
+                    ));
             if ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew) {
                 // Not move only form.
                 $currentgrp[1] = $mform->createElement('checkbox', 'usecurrentcat', '',
-                get_string('categorycurrentuse', 'question'));
+                        get_string('categorycurrentuse', 'question'));
                 $mform->setDefault('usecurrentcat', 1);
             }
             $currentgrp[0]->freeze();
             $currentgrp[0]->setPersistantFreeze(false);
-            $mform->addGroup($currentgrp, 'currentgrp', get_string('categorycurrent', 'question'), null, false);
+            $mform->addGroup($currentgrp, 'currentgrp', get_string('categorycurrent', 'question'),
+                    null, false);
 
             $mform->addElement('questioncategory', 'categorymoveto',
-            get_string('categorymoveto', 'question'),
-            array('contexts' => array($this->categorycontext)));
+                    get_string('categorymoveto', 'question'),
+                    array('contexts' => array($this->categorycontext
+                    )
+                    ));
             if ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew) {
                 // Not move only form.
                 $mform->disabledIf('categorymoveto', 'usecurrentcat', 'checked');
@@ -117,45 +127,51 @@ class qtype_scmc_edit_form extends question_edit_form {
 
         $mform->addElement('header', 'generalheader', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('tasktitle', 'qtype_scmc'),
-        array('size' => 50, 'maxlength' => 255));
+                array('size' => 50, 'maxlength' => 255
+                ));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('text', 'defaultmark', get_string('maxpoints', 'qtype_scmc'),
-        array('size' => 7
-        ));
+                array('size' => 7
+                ));
         $mform->setType('defaultmark', PARAM_FLOAT);
         $mform->setDefault('defaultmark', 1);
         $mform->addRule('defaultmark', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'questiontext', get_string('stem', 'qtype_scmc'),
-        array('rows' => 15), $this->editoroptions);
+                array('rows' => 15
+                ), $this->editoroptions);
         $mform->setType('questiontext', PARAM_RAW);
         $mform->addRule('questiontext', null, 'required', null, 'client');
         $mform->setDefault('questiontext',
-        array('text' => get_string('enterstemhere', 'qtype_scmc')));
+                array('text' => get_string('enterstemhere', 'qtype_scmc')
+                ));
 
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question'),
-        array('rows' => 10), $this->editoroptions);
+                array('rows' => 10
+                ), $this->editoroptions);
         $mform->setType('generalfeedback', PARAM_RAW);
         $mform->addHelpButton('generalfeedback', 'generalfeedback', 'qtype_scmc');
-		$mform->addElement('select', 'answernumbering',
-                get_string('answernumbering', 'qtype_scmc'),
+        $mform->addElement('select', 'answernumbering', get_string('answernumbering', 'qtype_scmc'),
                 qtype_scmc::get_numbering_styles());
-		if (!empty($this->question->options->answernumbering)){
-			$mform->setDefault('answernumbering', array($this->question->options->answernumbering));
-		}
+        if (!empty($this->question->options->answernumbering)) {
+            $mform->setDefault('answernumbering', array($this->question->options->answernumbering
+            ));
+        }
         // Any questiontype specific fields.
         $this->definition_inner($mform);
-		
-		// TAGS - See API 3 https://docs.moodle.org/dev/Tag_API_3_Specification
-		if(class_exists('core_tag_tag')) { // Started from moodle 3.1 but we dev for 2.6+
-			if (core_tag_tag::is_enabled('core_question', 'question')) {
-				$mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
-				$mform->addElement('tags', 'tags', get_string('tags'), array('itemtype' => 'scmc', 'component' => 'qtype_scmc'));
-			}
-		}
-		
+
+        // TAGS - See API 3 https://docs.moodle.org/dev/Tag_API_3_Specification
+        if (class_exists('core_tag_tag')) { // Started from moodle 3.1 but we dev for 2.6+
+            if (core_tag_tag::is_enabled('core_question', 'question')) {
+                $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
+                $mform->addElement('tags', 'tags', get_string('tags'),
+                        array('itemtype' => 'question', 'component' => 'core_question'
+                        ));
+            }
+        }
+
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
                     get_string('createdmodifiedheader', 'question'));
@@ -175,29 +191,33 @@ class qtype_scmc_edit_form extends question_edit_form {
             if (!empty($this->question->modifiedby)) {
                 $a = new stdClass();
                 $a->time = userdate($this->question->timemodified);
-                $a->user = fullname($DB->get_record('user', array('id' => $this->question->modifiedby)));
+                $a->user = fullname(
+                        $DB->get_record('user', array('id' => $this->question->modifiedby
+                        )));
                 $mform->addElement('static', 'modified', get_string('modified', 'question'),
-                get_string('byandon', 'question', $a));
+                        get_string('byandon', 'question', $a));
             }
         }
-		global $PAGE;
+        global $PAGE;
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'updatebutton',
-                              get_string('savechangesandcontinueediting', 'question'));
+                get_string('savechangesandcontinueediting', 'question'));
         if ($this->can_preview()) {
-             $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
-                     $this->question->id, $this->context, true);
-              $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
+            $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
+                    $this->question->id, $this->context, true);
+            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
         }
-  
-        $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
+
+        $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '
+        ), false);
         $mform->closeHeaderBefore('updatebuttonar');
- 
+
         if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
                  $this->question->formoptions->cansaveasnew))) {
-              $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
+            $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'
+            ));
         }
-		
+
         $this->add_hidden_fields();
         $this->add_action_buttons();
     }
@@ -215,100 +235,97 @@ class qtype_scmc_edit_form extends question_edit_form {
         } else {
             $this->numberofrows = 3;
         }
-		// LMDL-141
-		$lastnumberofrows = $this->numberofrows;
-		if ($this->numberofrows > 5) { // Reset to the max. i.e 5
-			$this->numberofrows = 5;
-		}
+        // LMDL-141
+        $lastnumberofrows = $this->numberofrows;
+        if ($this->numberofrows > 5) { // Reset to the max. i.e 5
+            $this->numberofrows = 5;
+        }
         if (isset($this->question->options->columns) && count($this->question->options->columns) > 0) {
             $this->numberofcolumns = count($this->question->options->columns);
         } else {
             $this->numberofcolumns = 1;
         }
-		$this->editoroptions['changeformat'] = 1;
-		$menu = array(
-			1 => get_string('answersingleyes', 'qtype_scmc'),
+        $this->editoroptions['changeformat'] = 1;
+        $menu = array(1 => get_string('answersingleyes', 'qtype_scmc'),
             2 => get_string('answersingleno', 'qtype_scmc')
         );
-		$mform->addElement('select', 'numberofcolumns',
-        get_string('numberofcolumns', 'qtype_scmc'), $menu);
+        $mform->addElement('select', 'numberofcolumns', get_string('numberofcolumns', 'qtype_scmc'),
+                $menu);
         $mform->setDefault('numberofcolumns', 1);
         $mform->addHelpButton('numberofcolumns', 'numberofcolumns', 'qtype_scmc');
 
-		$numberoptionsmenu = array(
-            2 => 2,
-            3 => 3,
-			4 => 4,
-			5 => 5,
+        $numberoptionsmenu = array(2 => 2, 3 => 3, 4 => 4, 5 => 5
         );
-		/*
-		if(isset($this->question->id)) {
-			$numoptionsdisabled = array('disabled'=>'disabled');
-		} else {
-			$numoptionsdisabled = array();
-		}
-		*/
-		$numoptionsdisabled = array();
-		$mform->addElement('select', 'numberofrows',
-        get_string('numberofrows', 'qtype_scmc'), $numberoptionsmenu,$numoptionsdisabled);
-		$mform->setDefault('numberofrows', 3);
+        /*
+         * if(isset($this->question->id)) {
+         * $numoptionsdisabled = array('disabled'=>'disabled');
+         * } else {
+         * $numoptionsdisabled = array();
+         * }
+         */
+        $numoptionsdisabled = array();
+        $mform->addElement('select', 'numberofrows', get_string('numberofrows', 'qtype_scmc'),
+                $numberoptionsmenu, $numoptionsdisabled);
+        $mform->setDefault('numberofrows', 3);
         $mform->addHelpButton('numberofrows', 'numberofrows', 'qtype_scmc');
 
-		$mform->addElement('header', 'scoringmethodheader',
-        get_string('scoringmethod', 'qtype_scmc'));
+        $mform->addElement('header', 'scoringmethodheader',
+                get_string('scoringmethod', 'qtype_scmc'));
         // Add the scoring method radio buttons.
         $attributes = array();
         $scoringbuttons = array();
-		/*
-        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
-                get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
-		*/
+        /*
+         * $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
+         * get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
+         */
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
                 get_string('scoringsubpoints', 'qtype_scmc'), 'subpoints', $attributes);
-		$scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
+        $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
                 get_string('scoringscmconezero', 'qtype_scmc'), 'scmconezero', $attributes);
         $mform->addGroup($scoringbuttons, 'radiogroupscoring',
-        get_string('scoringmethod', 'qtype_scmc'), array(' <br/> '), false);
+                get_string('scoringmethod', 'qtype_scmc'), array(' <br/> '
+                ), false);
         $mform->addHelpButton('radiogroupscoring', 'scoringmethod', 'qtype_scmc');
         $mform->setDefault('scoringmethod', 'subpoints');
 
         // Add the shuffleoptions checkbox.
         $mform->addElement('advcheckbox', 'shuffleoptions',
-        get_string('shuffleoptions', 'qtype_scmc'), null, null, array(0, 1));
+                get_string('shuffleoptions', 'qtype_scmc'), null, null, array(0, 1
+                ));
         $mform->addHelpButton('shuffleoptions', 'shuffleoptions', 'qtype_scmc');
 
         $mform->addElement('header', 'optionsandfeedbackheader',
                 get_string('optionsandfeedback', 'qtype_scmc'));
 
         // Add the response text fields.
-		$mform->addElement('html', '<span id="judgmentoptionsspan">');
+        $mform->addElement('html', '<span id="judgmentoptionsspan">');
         $responses = array();
         for ($i = 1; $i <= 2; ++$i) {
             $label = '';
             if ($i == 1) {
                 $label = get_string('responsetexts', 'qtype_scmc');
             }
-            $mform->addElement('text', 'responsetext_' . $i, $label,
-            array('size' => 6));
+            $mform->addElement('text', 'responsetext_' . $i, $label, array('size' => 6
+            ));
             $mform->setType('responsetext_' . $i, PARAM_TEXT);
             $mform->addRule('responsetext_' . $i, null, 'required', null, 'client');
 
-            $mform->setDefault('responsetext_' . $i,
-                get_string('responsetext' . $i, 'qtype_scmc'));
+            $mform->setDefault('responsetext_' . $i, get_string('responsetext' . $i, 'qtype_scmc'));
         }
-		$mform->addElement('html', '</span>');
+        $mform->addElement('html', '</span>');
         $responsetexts = array();
         if (isset($this->question->options->columns) && !empty($this->question->options->columns)) {
             foreach ($this->question->options->columns as $key => $column) {
                 $responsetexts[] = format_text($column->responsetext, FORMAT_HTML);
             }
-			// What if only one col? have the max just in case
-			if (count($responsetexts)) {
-				for ($i = count($this->question->options->columns) + 1; $i <= QTYPE_SCMC_NUMBER_OF_RESPONSES; $i++ ) {
-					// Always default it to second options values...
-					$responsetexts[] = get_string('responsetext2', 'qtype_scmc');
-				}
-			}
+            // What if only one col? have the max just in case
+            if (count($responsetexts)) {
+                for ($i = count($this->question->options->columns) + 1; $i <=
+                         QTYPE_SCMC_NUMBER_OF_RESPONSES; $i++) {
+                    // Always default it to second options values...
+                    $responsetexts[] = get_string('responsetext2', 'qtype_scmc');
+                }
+            }
         } else {
             $responsetexts[] = get_string('responsetext1', 'qtype_scmc');
             $responsetexts[] = get_string('responsetext2', 'qtype_scmc');
@@ -317,7 +334,8 @@ class qtype_scmc_edit_form extends question_edit_form {
         // Add an option text editor, response radio buttons and a feedback editor for each option.
         for ($i = 1; $i <= 5 /*$this->numberofrows*/; ++$i) {
             // Add the option editor.
-            $mform->addElement('html', '<div class="optionbox" id="optionbox_response_'.$i.'">'); // Open div.optionbox.
+            $mform->addElement('html', '<div class="optionbox" id="optionbox_response_' . $i . '">'); // Open
+                                                                                                  // div.optionbox.
             $mform->addElement('html', '<div class="optionandresponses">'); // Open div.optionbox.
 
             $mform->addElement('html', '<div class="optiontext">'); // Open div.optiontext.
@@ -327,7 +345,8 @@ class qtype_scmc_edit_form extends question_edit_form {
             $mform->addElement('editor', 'option_' . $i, '', array('rows' => 8
             ), $this->editoroptions);
             $mform->setDefault('option_' . $i,
-            array('text' => get_string('enteroptionhere', 'qtype_scmc')));
+                    array('text' => get_string('enteroptionhere', 'qtype_scmc')
+                    ));
             $mform->setType('option_' . $i, PARAM_RAW);
 
             $mform->addElement('html', '</div>'); // Close div.optiontext.
@@ -335,34 +354,35 @@ class qtype_scmc_edit_form extends question_edit_form {
             // Add the radio buttons for responses.
             $mform->addElement('html', '<div class="responses">'); // Open div.responses.
             $radiobuttons = array();
-			$radiobuttonname = 'weightbutton_' . $i;
+            $radiobuttonname = 'weightbutton_' . $i;
 
             for ($j = 1; $j <= 2; ++$j) {
-				if ($j == 1){
-					$negativeorpositive = 'positive'; // Usually TRUE
-				}else{
-					$negativeorpositive = 'negative'; // Usually FALSE
-				}
-				$attributes = array('data-colscmc'=>$negativeorpositive);
-				/*
-				if (2 >= 2) { //disable all other exclusive radios
-					$radiobuttonname = 'weightbutton_' . $i;
-				} else {
-					$radiobuttonname = 'weightbutton[]';
-				}
-				*/
+                if ($j == 1) {
+                    $negativeorpositive = 'positive'; // Usually TRUE
+                } else {
+                    $negativeorpositive = 'negative'; // Usually FALSE
+                }
+                $attributes = array('data-colscmc' => $negativeorpositive
+                );
+                /*
+                 * if (2 >= 2) { //disable all other exclusive radios
+                 * $radiobuttonname = 'weightbutton_' . $i;
+                 * } else {
+                 * $radiobuttonname = 'weightbutton[]';
+                 * }
+                 */
 
                 if (array_key_exists($j - 1, $responsetexts)) {
                     $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '',
                             $responsetexts[$j - 1], $j, $attributes);
                 } else {
-                    $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '', '',
-                            $j, $attributes);
+                    $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '', '', $j,
+                            $attributes);
                 }
             }
             $mform->addGroup($radiobuttons, $radiobuttonname, '', array('<br/>'
             ), false);
-			$mform->setDefault($radiobuttonname, 2);
+            $mform->setDefault($radiobuttonname, 2);
 
             $mform->addElement('html', '</div>'); // Close div.responses.
             $mform->addElement('html', '</div>'); // Close div.optionsandresponses.
@@ -372,25 +392,25 @@ class qtype_scmc_edit_form extends question_edit_form {
             // Add the feedback text editor in a new line.
             $mform->addElement('html', '<div class="feedbacktext">'); // Open div.feedbacktext.
             $mform->addElement('html',
-            '<label class="feedbacktitle">' .
-            get_string('feedbackforoption', 'qtype_scmc', $i) . '</label>');
+                    '<label class="feedbacktitle">' .
+                             get_string('feedbackforoption', 'qtype_scmc', $i) . '</label>');
             $mform->addElement('editor', 'feedback_' . $i, '',
-            array('rows' => 2, 'placeholder' => ''), $this->editoroptions);
+                    array('rows' => 2, 'placeholder' => ''
+                    ), $this->editoroptions);
             $mform->setType('feedback_' . $i, PARAM_RAW);
 
             $mform->addElement('html', '</div>'); // Close div.feedbacktext.
             $mform->addElement('html', '</div><br />'); // Close div.optionbox.
         }
 
-
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);
-		
-		// keep state of number of options to warn user if they go lower
+
+        // keep state of number of options to warn user if they go lower
         $mform->addElement('hidden', 'qtype_scmc_lastnumberofcols');
         $mform->setType('qtype_scmc_lastnumberofcols', PARAM_INT);
-		$mform->setDefault('qtype_scmc_lastnumberofcols', $lastnumberofrows);
-		
+        $mform->setDefault('qtype_scmc_lastnumberofcols', $lastnumberofrows);
+
         $mform->addElement('hidden', 'makecopy');
         $mform->setType('makecopy', PARAM_ALPHA);
 
@@ -399,12 +419,15 @@ class qtype_scmc_edit_form extends question_edit_form {
 
     public function js_call() {
         global $PAGE;
-        foreach (array_keys(get_string_manager()->load_component_strings('qtype_scmc', current_language())) as $string) {
-			$PAGE->requires->string_for_js($string, 'qtype_scmc');
-		}
-		$PAGE->requires->jquery();
-		$PAGE->requires->yui_module('moodle-qtype_scmc-form', '', array(0));
+        foreach (array_keys(
+                get_string_manager()->load_component_strings('qtype_scmc', current_language())) as $string) {
+            $PAGE->requires->string_for_js($string, 'qtype_scmc');
+        }
+        $PAGE->requires->jquery();
+        $PAGE->requires->yui_module('moodle-qtype_scmc-form', '', array(0
+        ));
     }
+
     /**
      * (non-PHPdoc).
      *
@@ -418,10 +441,10 @@ class qtype_scmc_edit_form extends question_edit_form {
             $question->scoringmethod = $question->options->scoringmethod;
             $question->rows = $question->options->rows;
             $question->columns = $question->options->columns;
-			// LMDL-141
-			if ($question->options->numberofrows > 5) { // Reset to the max. i.e 5
-				$question->options->numberofrows = 5;
-			}
+            // LMDL-141
+            if ($question->options->numberofrows > 5) { // Reset to the max. i.e 5
+                $question->options->numberofrows = 5;
+            }
             $question->numberofrows = $question->options->numberofrows;
             $question->numberofcolumns = $question->options->numberofcolumns;
         }
@@ -432,9 +455,9 @@ class qtype_scmc_edit_form extends question_edit_form {
                 // Restore all images in the option text.
                 $draftid = file_get_submitted_draft_itemid('option_' . $key);
                 $question->{'option_' . $key}['text'] = file_prepare_draft_area($draftid,
-                $this->context->id, 'qtype_scmc', 'optiontext',
-                !empty($row->id) ? (int) $row->id : null, $this->fileoptions,
-                $row->optiontext);
+                        $this->context->id, 'qtype_scmc', 'optiontext',
+                        !empty($row->id) ? (int) $row->id : null, $this->fileoptions,
+                        $row->optiontext);
                 $question->{'option_' . $key}['itemid'] = $draftid;
 
                 // Now do the same for the feedback text.
@@ -448,7 +471,7 @@ class qtype_scmc_edit_form extends question_edit_form {
                 ++$key;
             }
         }
-		$this->js_call();
+        $this->js_call();
         return $question;
     }
 
