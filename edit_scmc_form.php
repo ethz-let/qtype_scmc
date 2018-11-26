@@ -172,6 +172,8 @@ class qtype_scmc_edit_form extends question_edit_form {
             }
         }
 
+        $this->add_interactive_settings(true, true);
+        
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
                     get_string('createdmodifiedheader', 'question'));
@@ -288,11 +290,11 @@ class qtype_scmc_edit_form extends question_edit_form {
         $mform->addHelpButton('radiogroupscoring', 'scoringmethod', 'qtype_scmc');
         $mform->setDefault('scoringmethod', 'subpoints');
 
-        // Add the shuffleoptions checkbox.
-        $mform->addElement('advcheckbox', 'shuffleoptions',
-                get_string('shuffleoptions', 'qtype_scmc'), null, null, array(0, 1
+        // Add the shuffleanswers checkbox.
+        $mform->addElement('advcheckbox', 'shuffleanswers',
+                get_string('shuffleanswers', 'qtype_scmc'), null, null, array(0, 1
                 ));
-        $mform->addHelpButton('shuffleoptions', 'shuffleoptions', 'qtype_scmc');
+        $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_scmc');
 
         $mform->addElement('header', 'optionsandfeedbackheader',
                 get_string('optionsandfeedback', 'qtype_scmc'));
@@ -428,6 +430,13 @@ class qtype_scmc_edit_form extends question_edit_form {
         ));
     }
 
+    protected function get_hint_fields($withclearwrong = false, $withshownumpartscorrect = false) {
+        list($repeated, $repeatedoptions) = parent::get_hint_fields($withclearwrong, $withshownumpartscorrect);
+        $repeatedoptions['hintclearwrong']['disabledif'] = array('single', 'eq', 1);
+        $repeatedoptions['hintshownumcorrect']['disabledif'] = array('single', 'eq', 1);
+        return array($repeated, $repeatedoptions);
+    }
+
     /**
      * (non-PHPdoc).
      *
@@ -435,9 +444,10 @@ class qtype_scmc_edit_form extends question_edit_form {
      */
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
-
+        $question = $this->data_preprocessing_hints($question, true, true);
+        
         if (isset($question->options)) {
-            $question->shuffleoptions = $question->options->shuffleoptions;
+            $question->shuffleanswers = $question->options->shuffleanswers;
             $question->scoringmethod = $question->options->scoringmethod;
             $question->rows = $question->options->rows;
             $question->columns = $question->options->columns;

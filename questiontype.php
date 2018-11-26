@@ -25,6 +25,49 @@ global $CFG;
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/type/scmc/lib.php');
 
+/**
+ * Question hint for scmc.
+ *
+ * An extension of {@link question_hint} for questions like match and multiple
+ * choice with multile answers, where there are options for whether to show the
+ * number of parts right at each stage, and to reset the wrong parts.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_hint_scmc extends question_hint_with_parts {
+
+    public $statewhichincorrect;
+
+    /**
+     * Constructor.
+     * @param int the hint id from the database.
+     * @param string $hint The hint text
+     * @param int the corresponding text FORMAT_... type.
+     * @param bool $shownumcorrect whether the number of right parts should be shown
+     * @param bool $clearwrong whether the wrong parts should be reset.
+     */
+    public function __construct($id, $hint, $hintformat, $shownumcorrect,
+                                                            $clearwrong, $statewhichincorrect) {
+        parent::__construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong);
+        $this->statewhichincorrect = $statewhichincorrect;
+    }
+
+    /**
+     * Create a basic hint from a row loaded from the question_hints table in the database.
+     * @param object $row with property options as well as hint, shownumcorrect and clearwrong set.
+     * @return question_hint_scmc
+     */
+    public static function load_from_record($row) {
+        return new question_hint_scmc($row->id, $row->hint, $row->hintformat,
+                $row->shownumcorrect, $row->clearwrong, $row->options);
+    }
+
+    public function adjust_display_options(question_display_options $options) {
+        parent::adjust_display_options($options);
+        $options->statewhichincorrect = $this->statewhichincorrect;
+    }
+}
 
 /**
  * The scmc question type.
@@ -50,8 +93,8 @@ class qtype_scmc extends question_type {
         if (!isset($question->options->numberofcolumns)) {
             $question->options->numberofcolumns = 1; //QTYPE_SCMC_NUMBER_OF_RESPONSES;
         }
-        if (!isset($question->options->shuffleoptions)) {
-            $question->options->shuffleoptions = $scmcconfig->shuffleoptions;
+        if (!isset($question->options->shuffleanswers)) {
+            $question->options->shuffleanswers = $scmcconfig->shuffleanswers;
         }
         if (!isset($question->options->scoringmethod)) {
             $question->options->scoringmethod = $scmcconfig->scoringmethod;
@@ -159,7 +202,7 @@ class qtype_scmc extends question_type {
             $options = new stdClass();
             $options->questionid = $question->id;
             $options->scoringmethod = '';
-            $options->shuffleoptions = '';
+            $options->shuffleanswers = '';
             $options->numberofcolumns = '';
             $options->numberofrows = '';
 			$options->answernumbering = '';
@@ -167,7 +210,7 @@ class qtype_scmc extends question_type {
         }
 
         $options->scoringmethod = $question->scoringmethod;
-        $options->shuffleoptions = $question->shuffleoptions;
+        $options->shuffleanswers = $question->shuffleanswers;
         $options->numberofrows = $question->numberofrows;
         $options->numberofcolumns = $question->numberofcolumns;
 		$options->answernumbering = $question->answernumbering;
@@ -292,6 +335,82 @@ class qtype_scmc extends question_type {
 		}
     }
 
+    public function save_hints($formdata, $withparts = false) {
+        global $DB;
+        $context = $formdata->context;
+
+        $oldhints = $DB->get_records('question_hints',
+                array('questionid' => $formdata->id), 'id ASC');
+
+        if (!empty($formdata->hint)) {
+            $numhints = max(array_keys($formdata->hint)) + 1;
+        } else {
+            $numhints = 0;
+        }
+
+        if ($withparts) {
+            if (!empty($formdata->hintclearwrong)) {
+                $numclears = max(array_keys($formdata->hintclearwrong)) + 1;
+            } else {
+                $numclears = 0;
+            }
+            if (!empty($formdata->hintshownumcorrect)) {
+                $numshows = max(array_keys($formdata->hintshownumcorrect)) + 1;
+            } else {
+                $numshows = 0;
+            }
+            $numhints = max($numhints, $numclears, $numshows);
+        }
+
+        for ($i = 0; $i < $numhints; $i += 1) {
+            if (html_is_blank($formdata->hint[$i]['text'])) {
+                $formdata->hint[$i]['text'] = '';
+            }
+
+            if ($withparts) {
+                $clearwrong = !empty($formdata->hintclearwrong[$i]);
+                $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
+                $statewhichincorrect = !empty($formdata->hintoptions[$i]);
+            }
+
+            if (empty($formdata->hint[$i]['text']) && empty($clearwrong) &&
+                    empty($shownumcorrect) && empty($statewhichincorrect)) {
+                continue;
+            }
+
+            // Update an existing hint if possible.
+            $hint = array_shift($oldhints);
+            if (!$hint) {
+                $hint = new stdClass();
+                $hint->questionid = $formdata->id;
+                $hint->hint = '';
+                $hint->id = $DB->insert_record('question_hints', $hint);
+            }
+
+            $hint->hint = $this->import_or_save_files($formdata->hint[$i],
+                    $context, 'question', 'hint', $hint->id);
+            $hint->hintformat = $formdata->hint[$i]['format'];
+            if ($withparts) {
+                $hint->clearwrong = $clearwrong;
+                $hint->shownumcorrect = $shownumcorrect;
+                $hint->options = $statewhichincorrect;
+            }
+            $DB->update_record('question_hints', $hint);
+        }
+
+        // Delete any remaining old hints.
+        $fs = get_file_storage();
+        foreach ($oldhints as $oldhint) {
+            $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
+            $DB->delete_records('question_hints', array('id' => $oldhint->id));
+        }
+    }
+
+    protected function make_hint($hint) {
+        return question_hint_scmc::load_from_record($hint);
+    }
+    
+
     /**
      * Initialise the common question_definition fields.
      *
@@ -301,7 +420,7 @@ class qtype_scmc extends question_type {
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
 
-        $question->shuffleoptions = $questiondata->options->shuffleoptions;
+        $question->shuffleanswers = $questiondata->options->shuffleanswers;
         $question->scoringmethod = $questiondata->options->scoringmethod;
         $question->numberofrows = $questiondata->options->numberofrows;
         $question->numberofcolumns = $questiondata->options->numberofcolumns;
@@ -553,8 +672,8 @@ class qtype_scmc extends question_type {
         // First set the additional fields.
         $expout .= '    <scoringmethod>' . $format->writetext($question->options->scoringmethod) .
                  "</scoringmethod>\n";
-        $expout .= '    <shuffleoptions>' . $format->get_single($question->options->shuffleoptions) .
-                 "</shuffleoptions>\n";
+        $expout .= '    <shuffleanswers>' . $format->get_single($question->options->shuffleanswers) .
+                 "</shuffleanswers>\n";
         $expout .= '    <numberofrows>' . $question->options->numberofrows . "</numberofrows>\n";
         $expout .= '    <numberofcolumns>' . $question->options->numberofcolumns .
                  "</numberofcolumns>\n";
@@ -632,8 +751,8 @@ class qtype_scmc extends question_type {
         $question->scoringmethod = $format->getpath($data,
         array('#', 'scoringmethod', 0, '#', 'text', 0, '#'
         ), 'scmc');
-        $question->shuffleoptions = $format->trans_single(
-        $format->getpath($data, array('#', 'shuffleoptions', 0, '#'
+        $question->shuffleanswers = $format->trans_single(
+        $format->getpath($data, array('#', 'shuffleanswers', 0, '#'
         ), 1));
         $question->numberofrows = $format->getpath($data,
         array('#', 'numberofrows', 0, '#'

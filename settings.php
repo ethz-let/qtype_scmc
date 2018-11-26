@@ -39,9 +39,9 @@ if ($ADMIN->fulltree) {
 
     // Shuffle options.
     $settings->add(
-            new admin_setting_configcheckbox('qtype_scmc/shuffleoptions',
-                    get_string('shuffleoptions', 'qtype_scmc'),
-                    get_string('shuffleoptions_help', 'qtype_scmc'), 1));
+            new admin_setting_configcheckbox('qtype_scmc/shuffleanswers',
+                    get_string('shuffleanswers', 'qtype_scmc'),
+                    get_string('shuffleanswers_help', 'qtype_scmc'), 1));
     // Display full feedback for single choice or only selection feedback.
 	$options = array(
         '1' => get_string('yes'),

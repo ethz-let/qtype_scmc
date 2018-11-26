@@ -319,7 +319,7 @@ foreach ($questions as $question) {
     // Create the scmc options.
     $scmc = new stdClass();
     $scmc->questionid = $question->id;
-    $scmc->shuffleoptions = $multichoice->shuffleanswers;
+    $scmc->shuffleanswers = $multichoice->shuffleanswers;
 	/*
 	// Tobias decided not to go for it
 	// LMDL-141 what if more than 5 options selected in MC?
