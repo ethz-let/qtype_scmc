@@ -97,7 +97,7 @@ class qtype_scmc_renderer extends qtype_renderer {
         if ($displayoptions->readonly) {
             $inputattributes['disabled'] = 'disabled';
         }
-		$this->page->requires->js( new moodle_url($CFG->wwwroot . '/question/type/scmc/js/jquery.js') );
+		$this->page->requires->jquery();
 		$this->page->requires->js( new moodle_url($CFG->wwwroot . '/question/type/scmc/js/attempt.js') );
 		
         $result = '';

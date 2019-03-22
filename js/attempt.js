@@ -1,3 +1,4 @@
+require(['jquery'], function($) {
 $.noConflict();
 (function ($) {
     $(document).ready(function () {
@@ -21,4 +22,5 @@ $.noConflict();
 		});
 	});	
 })(jQuery);
+});
 // qtype_scmc : END		
