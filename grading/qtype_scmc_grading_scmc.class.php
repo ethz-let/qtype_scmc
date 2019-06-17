@@ -19,6 +19,9 @@
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/question/type/scmc/grading/qtype_scmc_grading.class.php');
 
 
@@ -50,8 +53,8 @@ class qtype_scmc_grading_scmc extends qtype_scmc_grading {
                 ++$correctrows;
             }
         }
-        // scmc: If all responses are correct = all points
-        // If one response is not correct and all the others are correct = half of the points
+        // Scmc: If all responses are correct = all points.
+        // If one response is not correct and all the others are correct = half of the points.
         // Otherwise = zero points.
         if ($correctrows == $question->numberofrows) {
             return 1;

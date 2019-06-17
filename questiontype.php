@@ -91,7 +91,7 @@ class qtype_scmc extends question_type {
             $question->options->numberofrows = QTYPE_SCMC_NUMBER_OF_OPTIONS;
         }
         if (!isset($question->options->numberofcolumns)) {
-            $question->options->numberofcolumns = 1; //QTYPE_SCMC_NUMBER_OF_RESPONSES;
+            $question->options->numberofcolumns = 1;
         }
         if (!isset($question->options->shuffleanswers)) {
             $question->options->shuffleanswers = $scmcconfig->shuffleanswers;
@@ -205,7 +205,7 @@ class qtype_scmc extends question_type {
             $options->shuffleanswers = '';
             $options->numberofcolumns = '';
             $options->numberofrows = '';
-			$options->answernumbering = '';
+            $options->answernumbering = '';
             $options->id = $DB->insert_record('qtype_scmc_options', $options);
         }
 
@@ -213,7 +213,7 @@ class qtype_scmc extends question_type {
         $options->shuffleanswers = $question->shuffleanswers;
         $options->numberofrows = $question->numberofrows;
         $options->numberofcolumns = $question->numberofcolumns;
-		$options->answernumbering = $question->answernumbering;
+        $options->answernumbering = $question->answernumbering;
         $DB->update_record('qtype_scmc_options', $options);
 
         $this->save_hints($question, true);
@@ -222,7 +222,7 @@ class qtype_scmc extends question_type {
         $oldrows = $DB->get_records('qtype_scmc_rows',
         array('questionid' => $question->id
         ), 'number ASC');
-		$newrows = array();
+        $newrows = array();
 
         for ($i = 1; $i <= $options->numberofrows; ++$i) {
             $row = array_shift($oldrows);
@@ -250,21 +250,21 @@ class qtype_scmc extends question_type {
 
             $DB->update_record('qtype_scmc_rows', $row);
 
-			$newrows[$row->id] = $row->id;
+            $newrows[$row->id] = $row->id;
         }
-		// Delete any left over old rows.
-		$fs = get_file_storage();
-		foreach ($oldrows as $oldrow) {
-			if (!in_array($oldrow->id, $newrows)) {
-					$fs->delete_area_files($context->id, 'qtype_scmc', 'optiontext', $oldrow->id);
-					$fs->delete_area_files($context->id, 'qtype_scmc', 'feedbacktext', $oldrow->id);
-					$DB->delete_records('qtype_scmc_rows', array('id' => $oldrow->id));
-			}
-		}
+        // Delete any left over old rows.
+        $fs = get_file_storage();
+        foreach ($oldrows as $oldrow) {
+            if (!in_array($oldrow->id, $newrows)) {
+                $fs->delete_area_files($context->id, 'qtype_scmc', 'optiontext', $oldrow->id);
+                $fs->delete_area_files($context->id, 'qtype_scmc', 'feedbacktext', $oldrow->id);
+                $DB->delete_records('qtype_scmc_rows', array('id' => $oldrow->id));
+            }
+        }
         $oldcolumns = $DB->get_records('qtype_scmc_columns',
         array('questionid' => $question->id
         ), 'number ASC');
-		$newcols = array();
+        $newcols = array();
         // Insert all new columns.
         for ($i = 1; $i <= $options->numberofcolumns; ++$i) {
             $column = array_shift($oldcolumns);
@@ -282,21 +282,21 @@ class qtype_scmc extends question_type {
             $column->responsetext = $question->{'responsetext_' . $i};
             $column->responsetextformat = FORMAT_MOODLE;
             $DB->update_record('qtype_scmc_columns', $column);
-			$newcols[$column->id] = $column->id;
+            $newcols[$column->id] = $column->id;
         }
 
-		// Delete any left over old columns.
-		foreach ($oldcolumns as $oldcolumn) {
-			if (!in_array($oldcolumn->id, $newcols)) {
-					$DB->delete_records('qtype_scmc_columns', array('id' => $oldcolumn->id));
-			}
-		}
+        // Delete any left over old columns.
+        foreach ($oldcolumns as $oldcolumn) {
+            if (!in_array($oldcolumn->id, $newcols)) {
+                $DB->delete_records('qtype_scmc_columns', array('id' => $oldcolumn->id));
+            }
+        }
 
         // Set all the new weights.
         $oldweightrecords = $DB->get_records('qtype_scmc_weights',
         array('questionid' => $question->id
         ), 'rownumber ASC, columnnumber ASC');
-		$newweights = array();
+        $newweights = array();
         // Put the old weights into an array.
         $oldweights = $this->weight_records_to_array($oldweightrecords);
 
@@ -324,23 +324,24 @@ class qtype_scmc extends question_type {
                     $weight->weight = 0.0;
                 }
                 $DB->update_record('qtype_scmc_weights', $weight);
-				$newweights[$weight->id] = $weight->id;
+                $newweights[$weight->id] = $weight->id;
             }
         }
-		// Delete any left over old weights.
-		foreach ($oldweightrecords as $oldweightrecord) {
-			if (!in_array($oldweightrecord->id, $newweights)) {
-					$DB->delete_records('qtype_scmc_weights', array('id' => $oldweightrecord->id));
-			}
-		}
+        // Delete any left over old weights.
+        foreach ($oldweightrecords as $oldweightrecord) {
+            if (!in_array($oldweightrecord->id, $newweights)) {
+                    $DB->delete_records('qtype_scmc_weights', array('id' => $oldweightrecord->id));
+            }
+        }
     }
 
     public function save_hints($formdata, $withparts = false) {
         global $DB;
         $context = $formdata->context;
 
-        $oldhints = $DB->get_records('question_hints',
-                array('questionid' => $formdata->id), 'id ASC');
+        $oldhints = $DB->get_records(
+            'question_hints',
+            array('questionid' => $formdata->id), 'id ASC');
 
         if (!empty($formdata->hint)) {
             $numhints = max(array_keys($formdata->hint)) + 1;
@@ -409,7 +410,6 @@ class qtype_scmc extends question_type {
     protected function make_hint($hint) {
         return question_hint_scmc::load_from_record($hint);
     }
-    
 
     /**
      * Initialise the common question_definition fields.
@@ -427,7 +427,7 @@ class qtype_scmc extends question_type {
         $question->rows = $questiondata->options->rows;
         $question->columns = $questiondata->options->columns;
         $question->weights = $questiondata->options->weights;
-		$question->answernumbering = $questiondata->options->answernumbering;
+        $question->answernumbering = $questiondata->options->answernumbering;
     }
 
     /**
@@ -477,32 +477,32 @@ class qtype_scmc extends question_type {
      */
     public function get_random_guess_score($questiondata) {
         $scoring = $questiondata->options->scoringmethod;
-		$questionoptioncount = $questiondata->options->numberofcolumns;
-		$totalfraction = 0;
-		$countpositiveweights = 0;
-		$question = $this->make_question($questiondata);
+        $questionoptioncount = $questiondata->options->numberofcolumns;
+        $totalfraction = 0;
+        $countpositiveweights = 0;
+        $question = $this->make_question($questiondata);
         $weights = $question->weights;
-		foreach ($question->rows as $rowid => $row) {
-			foreach ($question->columns as $columnid => $column) {
-					$weight = $weights[$row->number][$column->number]->weight;
-					$totalfraction += $weight;		
-					if ($weight > 0){
-						$countpositiveweights ++;
-					}
-			}
-		}
-		if ($questionoptioncount > 1) {			
-			if ($scoring == 'scmconezero') { 
-				return pow(0.5,count($question->rows)); //1.0 / (pow(2,count($question->rows)));
-			} else if ($scoring == 'subpoints') {
-				return 0.5; //1.0 / count($questiondata->options->rows);
-			} else {
-				return 0.00;
-			}		
-		} else {
-			// Single choice questions - average choice fraction.
-			return 1.0 / count($questiondata->options->rows);
-		}
+        foreach ($question->rows as $rowid => $row) {
+            foreach ($question->columns as $columnid => $column) {
+                $weight = $weights[$row->number][$column->number]->weight;
+                $totalfraction += $weight;
+                if ($weight > 0) {
+                    $countpositiveweights ++;
+                }
+            }
+        }
+        if ($questionoptioncount > 1) {
+            if ($scoring == 'scmconezero') {
+                return pow(0.5, count($question->rows));
+            } else if ($scoring == 'subpoints') {
+                return 0.5;
+            } else {
+                return 0.00;
+            }
+        } else {
+            // Single choice questions - average choice fraction.
+            return 1.0 / count($questiondata->options->rows);
+        }
     }
 
     /**
@@ -511,63 +511,62 @@ class qtype_scmc extends question_type {
      * @see question_type::get_possible_responses()
      */
     public function get_possible_responses($questiondata) {
-		
-		$questionoptioncount = $questiondata->options->numberofcolumns;
-		
+
+        $questionoptioncount = $questiondata->options->numberofcolumns;
+
         $question = $this->make_question($questiondata);
         $weights = $question->weights;
         $parts = array();
-		if ($questionoptioncount > 1) {
-			foreach ($question->rows as $rowid => $row) {
-				$choices = array();
-				foreach ($question->columns as $columnid => $column) {
-					// Calculate the partial credit.
-					if ($question->scoringmethod == 'subpoints') {
-						$partialcredit = 0.0;
-					} else {
-						$partialcredit = -0.999; // Due to non-linear math.
-					}
-					if (($question->scoringmethod == 'subpoints') &&
-							 $weights[$row->number][$column->number]->weight > 0) {
-						$partialcredit = 1 / count($question->rows);
-					}
-					$correctreponse = '';
-					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
-																			   // Response?
-						$correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
-					}
-					$choices[$columnid] = new question_possible_response(
-							question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
-									 ': ' . question_utils::to_plain_text(
-											$column->responsetext . $correctreponse,
-											$column->responsetextformat), $partialcredit);
-				}			
-				$choices[null] = question_possible_response::no_response();	
-
-				$parts[$rowid] = $choices;
-			}
-			return $parts;
-		} else {
-		    $choices = array();
+        if ($questionoptioncount > 1) {
             foreach ($question->rows as $rowid => $row) {
-				
-				foreach ($question->columns as $columnid => $column) {
-					if ($weights[$row->number][$column->number]->weight > 0) { // Is it correct
-																			   // Response?
-						$correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
-						$partialcredit = 1;
-					} else {
-						$correctreponse = '';
-						$partialcredit = 0;
-					}
-				}
+                $choices = array();
+                foreach ($question->columns as $columnid => $column) {
+                    // Calculate the partial credit.
+                    if ($question->scoringmethod == 'subpoints') {
+                        $partialcredit = 0.0;
+                    } else {
+                        $partialcredit = -0.999; // Due to non-linear math.
+                    }
+                    if (($question->scoringmethod == 'subpoints') &&
+                                $weights[$row->number][$column->number]->weight > 0) {
+                        $partialcredit = 1 / count($question->rows);
+                    }
+                    $correctreponse = '';
+                    if ($weights[$row->number][$column->number]->weight > 0) {
+                        // Is it correct response?
+                        $correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
+                    }
+                    $choices[$columnid] = new question_possible_response(
+                            question_utils::to_plain_text($row->optiontext, $row->optiontextformat) .
+                                        ': ' . question_utils::to_plain_text(
+                                            $column->responsetext . $correctreponse,
+                                            $column->responsetextformat), $partialcredit);
+                }
+                $choices[null] = question_possible_response::no_response();
+
+                $parts[$rowid] = $choices;
+            }
+            return $parts;
+        } else {
+            $choices = array();
+            foreach ($question->rows as $rowid => $row) {
+                foreach ($question->columns as $columnid => $column) {
+                    if ($weights[$row->number][$column->number]->weight > 0) {
+                        // Is it correct response?
+                        $correctreponse = ' (' . get_string('correctresponse', 'qtype_scmc') . ')';
+                        $partialcredit = 1;
+                    } else {
+                        $correctreponse = '';
+                        $partialcredit = 0;
+                    }
+                }
                 $choices[$rowid] = new question_possible_response(
-						question_utils::to_plain_text($row->optiontext . $correctreponse, $row->optiontextformat), $partialcredit);
+                        question_utils::to_plain_text($row->optiontext . $correctreponse, $row->optiontextformat), $partialcredit);
             }
             $choices[null] = question_possible_response::no_response();
             return array($questiondata->id => $choices);
 
-		}
+        }
 
     }
 
@@ -677,7 +676,7 @@ class qtype_scmc extends question_type {
         $expout .= '    <numberofrows>' . $question->options->numberofrows . "</numberofrows>\n";
         $expout .= '    <numberofcolumns>' . $question->options->numberofcolumns .
                  "</numberofcolumns>\n";
-		$expout .= '    <answernumbering>' . $question->options->answernumbering . "</answernumbering>\n";
+        $expout .= '    <answernumbering>' . $question->options->answernumbering . "</answernumbering>\n";
 
         // Now we export the question rows (options).
         foreach ($question->options->rows as $row) {
@@ -838,7 +837,6 @@ class qtype_scmc extends question_type {
                 $question->{'weightbutton_' . $rownumber} = $columnnumber;
             }
         }
-
         return $question;
     }
 }

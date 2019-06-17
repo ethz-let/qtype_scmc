@@ -19,8 +19,10 @@
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
-require_once($CFG->libdir . '/outputcomponents.php');
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/outputcomponents.php');
 
 /**
  * Subclass for generating the bits of output specific to scmc questions.
@@ -68,7 +70,7 @@ class qtype_scmc_renderer extends qtype_renderer {
     protected function get_input_id(question_attempt $qa, $value) {
         return $qa->get_qt_field_name('option' . $value);
     }
-	
+
     /**
      * Generate the display of the formulation part of the question.
      * This is the
@@ -80,16 +82,15 @@ class qtype_scmc_renderer extends qtype_renderer {
      *
      * @return string HTML fragment.
      */
-    public function formulation_and_controls(question_attempt $qa,
-            question_display_options $displayoptions) {
-		global $CFG;
-		$scmcconfig = get_config('qtype_scmc');
-		if (!$scmcconfig->only_single_feedback && $scmcconfig->only_single_feedback != 0) {
-			$scmcconfig->only_single_feedback = 1;
-		}
+    public function formulation_and_controls(question_attempt $qa, question_display_options $displayoptions) {
+        global $CFG;
+        $scmcconfig = get_config('qtype_scmc');
+        if (!$scmcconfig->only_single_feedback && $scmcconfig->only_single_feedback != 0) {
+            $scmcconfig->only_single_feedback = 1;
+        }
         $question = $qa->get_question();
         $response = $question->get_response($qa);
-		
+
         $inputname = $qa->get_qt_field_name('option');
         $inputattributes = array('type' => $this->get_input_type(), 'name' => $inputname
         );
@@ -97,8 +98,8 @@ class qtype_scmc_renderer extends qtype_renderer {
         if ($displayoptions->readonly) {
             $inputattributes['disabled'] = 'disabled';
         }
-		$this->page->requires->js( new moodle_url($CFG->wwwroot . '/question/type/scmc/js/attempt.js') );
-		
+        $this->page->requires->js( new moodle_url($CFG->wwwroot . '/question/type/scmc/js/attempt.js') );
+
         $result = '';
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
         array('class' => 'qtext'
@@ -108,25 +109,24 @@ class qtype_scmc_renderer extends qtype_renderer {
         $table->attributes['class'] = 'generaltable';
 
         $table->head = array();
-        // Add empty header for option texts.
-        // $table->head[] = '';
-		
-		// Add the response texts as table headers if question is not single choice.
-		if (count($question->columns) > 1) {	
-			foreach ($question->columns as $column) {
-				$cell = new html_table_cell(
-						$question->make_html_inline(
-								$question->format_text($column->responsetext,
-										$column->responsetextformat, $qa, 'question', 'response',
-										$column->id)));
-				$table->head[] = $cell;
-			}
-		}
+
+        // Add the response texts as table headers if question is not single choice.
+        if (count($question->columns) > 1) {
+            foreach ($question->columns as $column) {
+                $cell = new html_table_cell(
+                        $question->make_html_inline(
+                                $question->format_text($column->responsetext,
+                                        $column->responsetextformat, $qa, 'question', 'response',
+                                        $column->id)));
+                $table->head[] = $cell;
+            }
+        }
 
         // Add empty header for correctness if needed.
         if ($displayoptions->correctness) {
             $table->head[] = '';
         }
+
         // Add empty header for feedback if needed.
         if ($displayoptions->feedback) {
             $table->head[] = '';
@@ -138,6 +138,7 @@ class qtype_scmc_renderer extends qtype_renderer {
         foreach ($question->get_order($qa) as $key => $rowid) {
             $field = $question->field($key);
             $row = $question->rows[$rowid];
+
             // Holds the data for one table row.
             $rowdata = array();
 
@@ -145,35 +146,44 @@ class qtype_scmc_renderer extends qtype_renderer {
             foreach ($question->columns as $column) {
 
                 $buttonname = $qa->get_field_prefix() . $field;
-				$buttonid = 'qtype_scmc_' . $qa->get_field_prefix() . $field;
-				$qtype_scmc_id = 'qtype_scmc_' . $question->id;
-				$datacol = 'data-scmc="' . $qtype_scmc_id . '"';
+                $buttonid = 'qtype_scmc_' . $qa->get_field_prefix() . $field;
+                $qtypescmcid = 'qtype_scmc_' . $question->id;
+                $datacol = 'data-scmc="' . $qtypescmcid . '"';
                 $ischecked = false;
                 if (array_key_exists($field, $response) && ($response[$field] == $column->number)) {
                     $ischecked = true;
                 }
-				if (count($question->columns) > 1) {
-					$datamulti = 'data-multiscmc="1"';
-					$singleormulti = 2;
-				} else {
-					$datamulti = 'data-multiscmc="0"';
-					$singleormulti = 1;
-				}
-                $radio = $this->radiobutton($buttonname, $column->number, $ischecked, $isreadonly, $buttonid, $datacol, $datamulti, $singleormulti, $qtype_scmc_id);
+                if (count($question->columns) > 1) {
+                    $datamulti = 'data-multiscmc="1"';
+                    $singleormulti = 2;
+                } else {
+                    $datamulti = 'data-multiscmc="0"';
+                    $singleormulti = 1;
+                }
+                $radio = $this->radiobutton(
+                    $buttonname,
+                    $column->number,
+                    $ischecked,
+                    $isreadonly,
+                    $buttonid,
+                    $datacol,
+                    $datamulti,
+                    $singleormulti,
+                    $qtypescmcid);
                 // Show correctness icon with radio button if needed.
-				if (count($question->columns) > 1 || $scmcconfig->only_single_feedback == 0) {
-					if ($displayoptions->correctness) {
-						$weight = $question->weight($row->number, $column->number);
-						$radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
-								 '</span>';
-					}					
-				} else {
-					if ($displayoptions->correctness && $ischecked == true) {
-						$weight = $question->weight($row->number, $column->number);
-						$radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
-								 '</span>';	
-					}								 
-				}
+                if (count($question->columns) > 1 || $scmcconfig->only_single_feedback == 0) {
+                    if ($displayoptions->correctness) {
+                        $weight = $question->weight($row->number, $column->number);
+                        $radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
+                                    '</span>';
+                    }
+                } else {
+                    if ($displayoptions->correctness && $ischecked == true) {
+                        $weight = $question->weight($row->number, $column->number);
+                        $radio .= '<span class="scmcgreyingout">' . $this->feedback_image($weight > 0.0) .
+                                    '</span>';
+                    }
+                }
                 $cell = new html_table_cell($radio);
                 $cell->attributes['class'] = 'scmcresponsebutton';
                 $rowdata[] = $cell;
@@ -181,9 +191,9 @@ class qtype_scmc_renderer extends qtype_renderer {
 
             // Add the formated option text to the table.
             $rowtext = $this->number_in_style($rowcount, $question->answernumbering) .
-					   $question->make_html_inline($question->format_text( $row->optiontext, $row->optiontextformat, $qa,
+                        $question->make_html_inline($question->format_text( $row->optiontext, $row->optiontextformat, $qa,
                             'qtype_scmc', 'optiontext', $row->id));
-			$rowcount++;
+            $rowcount++;
 
             $cell = new html_table_cell('<span class="optiontext"><label for="' . $buttonid . '">' . $rowtext . '</label></span>');
             $cell->attributes['class'] = 'optiontext';
@@ -192,70 +202,68 @@ class qtype_scmc_renderer extends qtype_renderer {
             $isselected = $question->is_answered($response, $key);
             // For correctness we have to grade the option...
             if ($displayoptions->correctness) {
-				if (count($question->columns) > 1  || $scmcconfig->only_single_feedback == 0) {
-					$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
-					$cell = new html_table_cell($this->feedback_image($rowgrade));
-					$cell->attributes['class'] = 'scmccorrectness';
-					$rowdata[] = $cell;
-				} else {
-					if ($ischecked == true) {
-						$rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
-						$cell = new html_table_cell($this->feedback_image($rowgrade));
-						$cell->attributes['class'] = 'scmccorrectness';
-						$rowdata[] = $cell;	
-					} else {
-						$rowgrade = '';
-						$cell = new html_table_cell('');
-						$cell->attributes['class'] = 'scmccorrectness';
-						$rowdata[] = $cell;							
-					}						
-				}
+                if (count($question->columns) > 1  || $scmcconfig->only_single_feedback == 0) {
+                    $rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
+                    $cell = new html_table_cell($this->feedback_image($rowgrade));
+                    $cell->attributes['class'] = 'scmccorrectness';
+                    $rowdata[] = $cell;
+                } else {
+                    if ($ischecked == true) {
+                        $rowgrade = $question->grading()->grade_row($question, $key, $row, $response);
+                        $cell = new html_table_cell($this->feedback_image($rowgrade));
+                        $cell->attributes['class'] = 'scmccorrectness';
+                        $rowdata[] = $cell;
+                    } else {
+                        $rowgrade = '';
+                        $cell = new html_table_cell('');
+                        $cell->attributes['class'] = 'scmccorrectness';
+                        $rowdata[] = $cell;
+                    }
+                }
             }
-			if (count($question->columns) > 1  || $scmcconfig->only_single_feedback == 0) {
-				// Add the feedback to the table, if it is visible.
-				if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
-						 $isselected && trim($row->optionfeedback)) {
-					$cell = new html_table_cell(
-							html_writer::tag('div',
-									$question->make_html_inline(
-											$question->format_text($row->optionfeedback,
-													$row->optionfeedbackformat, $qa, 'qtype_scmc',
-													'feedbacktext', $rowid)),
-									array('class' => 'scmcspecificfeedback')));
-									
-					$rowdata[] = $cell;
-				} else {
-					 $cell = new html_table_cell( html_writer::tag('div', ''));
-					 $rowdata[] = $cell;
-				}
-			} else { // Single Choice
-				// Add the feedback to the table, if it is visible.
-				if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
-						 $isselected && trim($row->optionfeedback)) {
-					if ($ischecked == true) {
-						$feedback_str = $question->format_text($row->optionfeedback,
-													$row->optionfeedbackformat, $qa, 'qtype_scmc',
-													'feedbacktext', $rowid);
-					} else {
-						$feedback_str = '';
-					}						
-					$cell = new html_table_cell(
-							html_writer::tag('div',
-									$question->make_html_inline(
-											$feedback_str),
-									array('class' => 'scmcspecificfeedback')));
-									
-					$rowdata[] = $cell;
-				} else {
-					 $cell = new html_table_cell( html_writer::tag('div', ''));
-					 $rowdata[] = $cell;
-				}						 
-			}
+            if (count($question->columns) > 1  || $scmcconfig->only_single_feedback == 0) {
+                // Add the feedback to the table, if it is visible.
+                if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
+                            $isselected && trim($row->optionfeedback)) {
+                    $cell = new html_table_cell(
+                            html_writer::tag('div',
+                                    $question->make_html_inline(
+                                            $question->format_text($row->optionfeedback,
+                                                    $row->optionfeedbackformat, $qa, 'qtype_scmc',
+                                                    'feedbacktext', $rowid)),
+                                    array('class' => 'scmcspecificfeedback')));
+
+                    $rowdata[] = $cell;
+                } else {
+                        $cell = new html_table_cell( html_writer::tag('div', ''));
+                        $rowdata[] = $cell;
+                }
+            } else { // Single Choice.
+                // Add the feedback to the table, if it is visible.
+                if ($displayoptions->feedback && empty($displayoptions->suppresschoicefeedback) &&
+                            $isselected && trim($row->optionfeedback)) {
+                    if ($ischecked == true) {
+                        $feedbackstr = $question->format_text($row->optionfeedback,
+                                                    $row->optionfeedbackformat, $qa, 'qtype_scmc',
+                                                    'feedbacktext', $rowid);
+                    } else {
+                        $feedbackstr = '';
+                    }
+                    $cell = new html_table_cell(
+                            html_writer::tag('div',
+                                    $question->make_html_inline(
+                                            $feedbackstr),
+                                    array('class' => 'scmcspecificfeedback')));
+
+                    $rowdata[] = $cell;
+                } else {
+                        $cell = new html_table_cell( html_writer::tag('div', ''));
+                        $rowdata[] = $cell;
+                }
+            }
             $table->data[] = $rowdata;
         }
-
         $result .= html_writer::table($table, true);
-
         return $result;
     }
 
@@ -269,27 +277,28 @@ class qtype_scmc_renderer extends qtype_renderer {
      *
      * @return string
      */
-    protected static function radiobutton($name, $value, $checked, $readonly, $id = '', $datacol = '', $datamulti = '', $singleormulti = 2, $qtype_scmc_id = '') {
+    protected static function radiobutton($name, $value, $checked, $readonly, $id = '',
+        $datacol = '', $datamulti = '', $singleormulti = 2, $qtypescmcid = '') {
+
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
-		$result = '';
-		
-		if ($id == '') {
-			$id = $name;
-		}
-		if ($singleormulti >= 2){			
-			$result .= '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
-                 $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
-		} else {
-			
-			$result .= '<input type="hidden" id="hidden_'. $id .'" name="'. $name .'" value="2" data-hiddenscmc="' . $qtype_scmc_id .  '" disabled="disabled">';	 
-			
-			$result .= '<input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . $checked . ' ' .
-                 $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
- 
-			
-		}
-		return $result;
+        $result = '';
+
+        if ($id == '') {
+            $id = $name;
+        }
+        if ($singleormulti >= 2) {
+            $result .= '<input type="radio" id="' . $id . '" name="' . $name .
+                '" value="' . $value . '" ' . $checked . ' ' .
+                $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
+        } else {
+            $result .= '<input type="hidden" id="hidden_'. $id .'" name="'. $name .
+                '" value="2" data-hiddenscmc="' . $qtypescmcid .  '" disabled="disabled">';
+            $result .= '<input type="radio" id="' . $id . '" name="' . $name .
+                '" value="' . $value . '" ' . $checked . ' ' .
+                $readonly . ' ' . $datacol . ' ' . $datamulti . '/>';
+        }
+        return $result;
     }
 
     /**
@@ -314,20 +323,19 @@ class qtype_scmc_renderer extends qtype_renderer {
         foreach ($question->order as $key => $rowid) {
             $row = $question->rows[$rowid];
 
-			if (isset($correctresponse[$rowid])){
-				if (isset($question->columns[$correctresponse[$rowid]])){
-					$correctcolumn = $question->columns[$correctresponse[$rowid]];
-				}
-			} else {
-				$correctcolumn = new stdClass;
-				$correctcolumn->responsetextformat = 1;
-				$correctcolumn->responsetext = get_string('false','qtype_scmc');
-				$correctcolumn->id = $rowid;
-			}
-
+            if (isset($correctresponse[$rowid])) {
+                if (isset($question->columns[$correctresponse[$rowid]])) {
+                    $correctcolumn = $question->columns[$correctresponse[$rowid]];
+                }
+            } else {
+                $correctcolumn = new stdClass;
+                $correctcolumn->responsetextformat = 1;
+                $correctcolumn->responsetext = get_string('false', 'qtype_scmc');
+                $correctcolumn->id = $rowid;
+            }
 
             $result[] = ' ' .
-                     $question->make_html_inline(
+                        $question->make_html_inline(
                             $question->format_text($row->optiontext, $row->optiontextformat, $qa,
                                     'qtype_scmc', 'optiontext', $rowid)) . ': ' . $question->make_html_inline(
                             $question->format_text($correctcolumn->responsetext,
@@ -342,7 +350,7 @@ class qtype_scmc_renderer extends qtype_renderer {
 
         return $response;
     }
-	
+
     protected function number_html($qnum) {
         return $qnum . '. ';
     }
@@ -376,5 +384,5 @@ class qtype_scmc_renderer extends qtype_renderer {
                 return 'ERR';
         }
         return $this->number_html($number);
-    }	
+    }
 }

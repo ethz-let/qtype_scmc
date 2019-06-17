@@ -19,36 +19,38 @@
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot . '/question/type/scmc/lib.php');
 
     // Introductory explanation that all the settings are defaults for the edit_scmc_form.
-    $settings->add(
-            new admin_setting_heading('configintro', '', get_string('configintro', 'qtype_scmc')));
+    $settings->add(new admin_setting_heading('configintro',
+        '',
+        get_string('configintro', 'qtype_scmc')));
+
     // Scoring methods.
     $options = array(
         'scmconezero' => get_string('scoringscmconezero', 'qtype_scmc'),
         'subpoints' => get_string('scoringsubpoints', 'qtype_scmc')
     );
 
-    $settings->add(
-            new admin_setting_configselect('qtype_scmc/scoringmethod',
-                    get_string('configscoringmethod', 'qtype_scmc'), get_string('scoringmethod_help', 'qtype_scmc'), 'subpoints', $options));
+    $settings->add(new admin_setting_configselect('qtype_scmc/scoringmethod',
+            get_string('configscoringmethod', 'qtype_scmc'),
+            get_string('scoringmethod_help', 'qtype_scmc'), 'subpoints', $options));
 
     // Shuffle options.
-    $settings->add(
-            new admin_setting_configcheckbox('qtype_scmc/shuffleanswers',
-                    get_string('shuffleanswers', 'qtype_scmc'),
-                    get_string('shuffleanswers_help', 'qtype_scmc'), 1));
+    $settings->add(new admin_setting_configcheckbox('qtype_scmc/shuffleanswers',
+            get_string('shuffleanswers', 'qtype_scmc'),
+            get_string('shuffleanswers_help', 'qtype_scmc'), 1));
+
     // Display full feedback for single choice or only selection feedback.
-	$options = array(
+    $options = array(
         '1' => get_string('yes'),
-        '0' => get_string('no')
-    );
-    $settings->add(
-            new admin_setting_configselect('qtype_scmc/only_single_feedback',
-                    get_string('onlysinglefeedback', 'qtype_scmc'),
-                    get_string('onlysinglefeedbackhelp', 'qtype_scmc'), 1, $options));	
+        '0' => get_string('no'));
+
+    $settings->add(new admin_setting_configselect('qtype_scmc/only_single_feedback',
+            get_string('onlysinglefeedback', 'qtype_scmc'),
+            get_string('onlysinglefeedbackhelp', 'qtype_scmc'), 1, $options));
 }

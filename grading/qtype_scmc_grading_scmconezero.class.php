@@ -19,6 +19,9 @@
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/question/type/scmc/grading/qtype_scmc_grading.class.php');
 
 
@@ -50,21 +53,21 @@ class qtype_scmc_grading_scmconezero extends qtype_scmc_grading {
                 ++$correctrows;
             }
         }
-        // scmc1/0: if all responses are correct => all points, else 0 points.
+        // Scmc1/0: if all responses are correct => all points, else 0 points.
         // i.e. points = if (correct_responses == num_options) then max_points else 0.
-		// If single choice, either 0 or 1
-		if ($question->numberofcolumns < 2) {			
-			if ($correctrows >= 1) {
-				return 1;
-			} else {
-				return 0;
-			}
-		} else {
-			if ($correctrows == $question->numberofrows) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}	
+        // If single choice, either 0 or 1.
+        if ($question->numberofcolumns < 2) {
+            if ($correctrows >= 1) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            if ($correctrows == $question->numberofrows) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

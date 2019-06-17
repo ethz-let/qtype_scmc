@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  *
@@ -22,9 +22,9 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-require_once ($CFG->dirroot . '/question/type/edit_question_form.php');
-require_once ($CFG->dirroot . '/question/type/scmc/lib.php');
-require_once ($CFG->dirroot . '/question/engine/bank.php');
+require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once($CFG->dirroot . '/question/type/scmc/lib.php');
+require_once($CFG->dirroot . '/question/engine/bank.php');
 
 
 /**
@@ -162,8 +162,8 @@ class qtype_scmc_edit_form extends question_edit_form {
         // Any questiontype specific fields.
         $this->definition_inner($mform);
 
-        // TAGS - See API 3 https://docs.moodle.org/dev/Tag_API_3_Specification
-        if (class_exists('core_tag_tag')) { // Started from moodle 3.1 but we dev for 2.6+
+        // TAGS - See API 3 https://docs.moodle.org/dev/Tag_API_3_Specification.
+        if (class_exists('core_tag_tag')) { // Started from moodle 3.1 but we dev for 2.6+.
             if (core_tag_tag::is_enabled('core_question', 'question')) {
                 $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
                 $mform->addElement('tags', 'tags', get_string('tags'),
@@ -173,7 +173,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         }
 
         $this->add_interactive_settings(true, true);
-        
+
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
                     get_string('createdmodifiedheader', 'question'));
@@ -237,9 +237,9 @@ class qtype_scmc_edit_form extends question_edit_form {
         } else {
             $this->numberofrows = 3;
         }
-        // LMDL-141
+        // LMDL-141.
         $lastnumberofrows = $this->numberofrows;
-        if ($this->numberofrows > 5) { // Reset to the max. i.e 5
+        if ($this->numberofrows > 5) { // Reset to the max. i.e 5.
             $this->numberofrows = 5;
         }
         if (isset($this->question->options->columns) && count($this->question->options->columns) > 0) {
@@ -258,13 +258,7 @@ class qtype_scmc_edit_form extends question_edit_form {
 
         $numberoptionsmenu = array(2 => 2, 3 => 3, 4 => 4, 5 => 5
         );
-        /*
-         * if(isset($this->question->id)) {
-         * $numoptionsdisabled = array('disabled'=>'disabled');
-         * } else {
-         * $numoptionsdisabled = array();
-         * }
-         */
+
         $numoptionsdisabled = array();
         $mform->addElement('select', 'numberofrows', get_string('numberofrows', 'qtype_scmc'),
                 $numberoptionsmenu, $numoptionsdisabled);
@@ -276,10 +270,6 @@ class qtype_scmc_edit_form extends question_edit_form {
         // Add the scoring method radio buttons.
         $attributes = array();
         $scoringbuttons = array();
-        /*
-         * $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
-         * get_string('scoringscmc', 'qtype_scmc'), 'scmc', $attributes);
-         */
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
                 get_string('scoringsubpoints', 'qtype_scmc'), 'subpoints', $attributes);
         $scoringbuttons[] = &$mform->createElement('radio', 'scoringmethod', '',
@@ -320,7 +310,7 @@ class qtype_scmc_edit_form extends question_edit_form {
             foreach ($this->question->options->columns as $key => $column) {
                 $responsetexts[] = format_text($column->responsetext, FORMAT_HTML);
             }
-            // What if only one col? have the max just in case
+            // What if only one col? have the max just in case.
             if (count($responsetexts)) {
                 for ($i = count($this->question->options->columns) + 1; $i <=
                          QTYPE_SCMC_NUMBER_OF_RESPONSES; $i++) {
@@ -334,10 +324,11 @@ class qtype_scmc_edit_form extends question_edit_form {
         }
 
         // Add an option text editor, response radio buttons and a feedback editor for each option.
-        for ($i = 1; $i <= 5 /*$this->numberofrows*/; ++$i) {
+        for ($i = 1; $i <= 5; ++$i) {
+
             // Add the option editor.
-            $mform->addElement('html', '<div class="optionbox" id="optionbox_response_' . $i . '">'); // Open
-                                                                                                  // div.optionbox.
+            $mform->addElement('html', '<div class="optionbox" id="optionbox_response_' . $i . '">');
+            // Open div.optionbox.
             $mform->addElement('html', '<div class="optionandresponses">'); // Open div.optionbox.
 
             $mform->addElement('html', '<div class="optiontext">'); // Open div.optiontext.
@@ -360,26 +351,18 @@ class qtype_scmc_edit_form extends question_edit_form {
 
             for ($j = 1; $j <= 2; ++$j) {
                 if ($j == 1) {
-                    $negativeorpositive = 'positive'; // Usually TRUE
+                    $negativeorpositive = 'positive'; // Usually TRUE.
                 } else {
-                    $negativeorpositive = 'negative'; // Usually FALSE
+                    $negativeorpositive = 'negative'; // Usually FALSE.
                 }
                 $attributes = array('data-colscmc' => $negativeorpositive
                 );
-                /*
-                 * if (2 >= 2) { //disable all other exclusive radios
-                 * $radiobuttonname = 'weightbutton_' . $i;
-                 * } else {
-                 * $radiobuttonname = 'weightbutton[]';
-                 * }
-                 */
 
                 if (array_key_exists($j - 1, $responsetexts)) {
-                    $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '',
-                            $responsetexts[$j - 1], $j, $attributes);
+                    $radiobuttons[] = &$mform->createElement(
+                        'radio', $radiobuttonname, '', $responsetexts[$j - 1], $j, $attributes);
                 } else {
-                    $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '', '', $j,
-                            $attributes);
+                    $radiobuttons[] = &$mform->createElement('radio', $radiobuttonname, '', '', $j, $attributes);
                 }
             }
             $mform->addGroup($radiobuttons, $radiobuttonname, '', array('<br/>'
@@ -408,7 +391,7 @@ class qtype_scmc_edit_form extends question_edit_form {
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);
 
-        // keep state of number of options to warn user if they go lower
+        // Keep state of number of options to warn user if they go lower.
         $mform->addElement('hidden', 'qtype_scmc_lastnumberofcols');
         $mform->setType('qtype_scmc_lastnumberofcols', PARAM_INT);
         $mform->setDefault('qtype_scmc_lastnumberofcols', $lastnumberofrows);
@@ -445,14 +428,14 @@ class qtype_scmc_edit_form extends question_edit_form {
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_hints($question, true, true);
-        
+
         if (isset($question->options)) {
             $question->shuffleanswers = $question->options->shuffleanswers;
             $question->scoringmethod = $question->options->scoringmethod;
             $question->rows = $question->options->rows;
             $question->columns = $question->options->columns;
-            // LMDL-141
-            if ($question->options->numberofrows > 5) { // Reset to the max. i.e 5
+            // LMDL-141.
+            if ($question->options->numberofrows > 5) { // Reset to the max. i.e 5.
                 $question->options->numberofrows = 5;
             }
             $question->numberofrows = $question->options->numberofrows;

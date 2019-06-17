@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  *
@@ -23,7 +23,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_scmc';
-$plugin->version = 2019060300;
-$plugin->requires = 2017111300; // Moodle >=3.4
+$plugin->version = 2019061700;
+$plugin->requires = 2017111300; // Moodle >=3.4.
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '0.2 for Moodle 3.5+';
+$plugin->release = '0.1 for Moodle 3.4+';

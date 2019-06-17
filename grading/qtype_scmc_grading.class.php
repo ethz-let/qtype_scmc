@@ -19,6 +19,9 @@
  * @author Amr Hourani amr.hourani@id.ethz.ch
  * @copyright ETHz 2016 amr.hourani@id.ethz.ch
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 abstract class qtype_scmc_grading {
 
     abstract public function get_name();
@@ -26,7 +29,7 @@ abstract class qtype_scmc_grading {
     abstract public function get_title();
 
     abstract public function grade_question($question, $answers);
-	
+
     /**
      * Grade a specific row.
      * This is the same for all grading methods.
