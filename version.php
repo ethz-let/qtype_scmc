@@ -17,13 +17,14 @@
 /**
  *
  * @package qtype_scmc
- * @author Amr Hourani amr.hourani@id.ethz.ch
- * @copyright ETHz 2016 amr.hourani@id.ethz.ch
+ * @author ETH Zurich (moodle@id.ethz.ch)
+ * @copyright ETHz 2016
  */
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_scmc';
-$plugin->version = 2024051800;
+$plugin->version = 2024100100;
 $plugin->requires = 2021050100; // Moodle >=3.11+.
+
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '4 possible from Moodle 3.11 (Transitional)';
+$plugin->release = '4.5';
