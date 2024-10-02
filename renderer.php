@@ -16,13 +16,12 @@
 
 /**
  * @package qtype_scmc
- * @author Amr Hourani amr.hourani@id.ethz.ch
- * @copyright ETHz 2016 amr.hourani@id.ethz.ch
+ * @author ETH Zurich moodle@id.ethz.ch
+ * @copyright ETHz 2016
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/outputcomponents.php');
 
 /**
  * Subclass for generating the bits of output specific to scmc questions.

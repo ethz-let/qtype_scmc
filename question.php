@@ -35,7 +35,9 @@ class qtype_scmc_question extends question_graded_automatically_with_countback {
 
     public $numberofrows;
 
-    public $numberofcols;
+    public $numberofcolumns;
+
+    public $answernumbering;
 
     public $order = null;
 

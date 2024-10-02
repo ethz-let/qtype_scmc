@@ -15,9 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ *
  * @package qtype_scmc
- * @author Amr Hourani amr.hourani@id.ethz.ch
- * @copyright ETHz 2016 amr.hourani@id.ethz.ch
+ * @author ETH Zurich (moodle@id.ethz.ch)
+ * @copyright ETHz 2016
  */
 defined('MOODLE_INTERNAL') || die();
 
